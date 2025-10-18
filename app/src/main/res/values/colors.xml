@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue">#167AD8</color>
+    <color name="text_ico">#334155</color>
+    <color name="milk">#F9FAFB</color>
 </resources>

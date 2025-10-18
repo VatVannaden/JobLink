@@ -12,7 +12,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JobLink">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StartScreen1Activity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StartScreen2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StartScreen3Activity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
