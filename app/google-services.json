@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "937934108367",
+    "project_id": "joblink-b5ccc",
+    "storage_bucket": "joblink-b5ccc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937934108367:android:7b10508890dd9e2779a9ba",
+        "android_client_info": {
+          "package_name": "com.example.joblink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBe3v0jmyeBDDcnKkkmHvN10z0l8fkI1sM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
