@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JobLink">
         <activity
+            android:name=".activity.WelcomeScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CompleteProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CheckEmailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.HomeActivity"
             android:exported="false" />
         <activity

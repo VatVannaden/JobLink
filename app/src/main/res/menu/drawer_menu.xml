@@ -10,25 +10,25 @@
             tools:ignore="HardcodedText" />
 
         <item
-            android:id="@+id/nav_account"
+            android:id="@+id/nav_bookmarks"
             android:icon="@drawable/ico_bookmarks"
             android:title="Bookmarks"
             tools:ignore="HardcodedText" />
 
         <item
-            android:id="@+id/nav_lost"
+            android:id="@+id/nav_create"
             android:icon="@drawable/ico_create"
             android:title="Create"
             tools:ignore="HardcodedText" />
 
         <item
-            android:id="@+id/nav_found"
+            android:id="@+id/nav_messages"
             android:icon="@drawable/ico_messages"
             android:title="Messages"
             tools:ignore="HardcodedText" />
 
         <item
-            android:id="@+id/nav_privacy"
+            android:id="@+id/nav_profile"
             android:icon="@drawable/ico_profile"
             android:title="Profile"
             tools:ignore="HardcodedText" />
