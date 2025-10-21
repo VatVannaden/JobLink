@@ -8,232 +8,204 @@
     android:background="@color/milk"
     tools:context=".activity.CreateAccountActivity">
 
-
+    <!-- Header Section -->
     <TextView
         android:id="@+id/sign_in_tx"
-        android:layout_width="300dp"
+        style="@style/sign_in_tx_main"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="150dp"
-        android:text="Almost there  "
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="80dp"
+        android:text="Almost there"
         android:textAlignment="center"
-        android:textAppearance="@style/sign_in_tx_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <TextView
         android:id="@+id/sign_in_tx_sub"
-        android:layout_width="300dp"
+        style="@style/sign_in_tx_sub"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:alpha="0.8"
         android:text="Complete your profile before continuing"
         android:textAlignment="center"
-        android:textAppearance="@style/sign_in_tx_sub"
         app:layout_constraintEnd_toEndOf="@+id/sign_in_tx"
         app:layout_constraintStart_toStartOf="@+id/sign_in_tx"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_tx" />
 
-
+    <!-- Phone Number Field -->
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/labelPhoneNumber"
+        style="@style/label_tx"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Phone Number"
-        android:textAppearance="@style/label_tx"
-        app:layout_constraintStart_toStartOf="@+id/editTextTePhoneNumber"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        app:layout_constraintStart_toStartOf="@+id/editTextPhoneNumber"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_tx_sub" />
 
     <EditText
-        android:id="@+id/editTextTePhoneNumber"
-        android:layout_width="match_parent"
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/label"
-        android:ems="15"
-        android:hint="Phone Number"
-        android:inputType="textEmailAddress"
+        android:hint="Enter your phone number"
+        android:inputType="phone"
         android:maxLines="1"
         android:paddingHorizontal="20dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.41"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/labelPhoneNumber" />
 
+    <!-- Gender Selection -->
     <TextView
-        android:id="@+id/gender"
+        android:id="@+id/labelGender"
+        style="@style/label_tx"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Gender"
-        android:textAppearance="@style/label_tx"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPassword"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_tx_sub" />
+        app:layout_constraintStart_toStartOf="@+id/radioGroupGender"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPhoneNumber" />
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/editTextTextPassword"
-        android:layout_width="match_parent"
+    <RadioGroup
+        android:id="@+id/radioGroupGender"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/label"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gender">
+        app:layout_constraintTop_toBottomOf="@+id/labelGender">
 
         <RadioButton
             android:id="@+id/radioMale"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:button="@drawable/ico_radio_button_inactive"
-            android:buttonTint="@null"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@drawable/custom_radio_selector"
             android:text=" Male"
             android:textColor="@color/text_ico"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioFemale"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:button="@color/custom_radio_selector"
-            android:buttonTint="@null"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@drawable/custom_radio_selector"
             android:text=" Female"
             android:textColor="@color/text_ico"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="16sp" />
+    </RadioGroup>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <!-- Location Field -->
     <TextView
-        android:id="@+id/dateOfBirth"
+        android:id="@+id/labelLocation"
+        style="@style/label_tx"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
-        android:text="Date of Birth"
-        android:textAppearance="@style/label_tx"
-        app:layout_constraintStart_toStartOf="@+id/editTextPassword"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
-
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/label"
-        android:drawableEnd="@drawable/ico_arrow1"
-        android:ems="10"
-        android:hint="DD MM YYYY"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:paddingHorizontal="20dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateOfBirth" />
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Location"
-        android:textAppearance="@style/label_tx"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextEmailAddress"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTePhoneNumber" />
+        app:layout_constraintStart_toStartOf="@+id/editTextLocation"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupGender" />
 
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="match_parent"
+        android:id="@+id/editTextLocation"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/label"
         android:drawableEnd="@drawable/ico_arrow1"
-        android:ems="16"
+        android:focusable="false"
         android:hint="Province"
-        android:inputType="textEmailAddress"
-        android:maxLines="1"
         android:paddingHorizontal="20dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location" />
+        app:layout_constraintTop_toBottomOf="@+id/labelLocation" />
 
+    <!-- Date of Birth Field -->
     <TextView
-        android:id="@+id/profession"
+        android:id="@+id/labelDateOfBirth"
+        style="@style/label_tx"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
-        android:text="Profession"
-        android:textAppearance="@style/label_tx"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextProfession"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Date of Birth"
+        app:layout_constraintStart_toStartOf="@+id/editTextDateOfBirth"
+        app:layout_constraintTop_toBottomOf="@+id/editTextLocation" />
 
     <EditText
-        android:id="@+id/editTextTextProfession"
-        android:layout_width="match_parent"
+        android:id="@+id/editTextDateOfBirth"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/label"
-        android:ems="16"
-        android:hint="Profession"
-        android:inputType="textEmailAddress"
+        android:drawableEnd="@drawable/ico_arrow1"
+        android:focusable="false"
+        android:hint="DD MM YYYY"
+        android:paddingHorizontal="20dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDateOfBirth" />
+
+    <!-- Profession Field -->
+    <TextView
+        android:id="@+id/labelProfession"
+        style="@style/label_tx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Profession"
+        app:layout_constraintStart_toStartOf="@+id/editTextProfession"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDateOfBirth" />
+
+    <EditText
+        android:id="@+id/editTextProfession"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/label"
+        android:hint="Enter your profession"
+        android:inputType="textCapWords"
         android:maxLines="1"
         android:paddingHorizontal="20dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profession" />
+        app:layout_constraintTop_toBottomOf="@+id/labelProfession" />
 
+    <!-- Confirm Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/frame_33849"
-        android:layout_width="match_parent"
+        android:id="@+id/confirmButton"
+        style="@style/label_button_tx"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/label_button"
         android:text="Confirm"
-        android:textAppearance="@style/label_button_tx"
         app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextProfession" />
-
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfession"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

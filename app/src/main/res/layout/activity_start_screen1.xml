@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    android:background="@color/white"
+    android:background="@drawable/start_sc_img1"
     tools:context=".activity.StartScreen1Activity"
     tools:ignore="Overdraw">
 
@@ -88,19 +88,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="615dp"
-        android:layout_height="473dp"
-        android:background="@drawable/start_sc_img1"
-        android:rotation="10"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
