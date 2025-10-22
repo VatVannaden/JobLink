@@ -57,7 +57,7 @@
     </style>
 
 
-    <style name="corner" parent="">
+    <style name="corner">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">20dp</item>
         <item name="cornerSizeTopRight">20dp</item>

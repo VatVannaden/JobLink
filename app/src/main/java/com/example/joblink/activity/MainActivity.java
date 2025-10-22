@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity {
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
-                startActivity(new Intent(this, StartScreen1Activity.class));
-                finish();
+            startActivity(new Intent(this, StartScreen1Activity.class));
+            finish();
 
         }, 1500);
     }

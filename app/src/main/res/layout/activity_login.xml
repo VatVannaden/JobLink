@@ -134,7 +134,7 @@
       app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
 
   <com.google.android.material.button.MaterialButton
-      android:id="@+id/frame_33849"
+      android:id="@+id/signInButton"
       android:layout_width="match_parent"
       android:layout_height="48dp"
       android:layout_marginHorizontal="20dp"
@@ -159,7 +159,7 @@
       android:gravity="center"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/frame_33849">
+      app:layout_constraintTop_toBottomOf="@+id/signInButton">
 
     <ImageView
         android:layout_width="22dp"
@@ -176,6 +176,7 @@
   </LinearLayout>
 
   <TextView
+      android:id="@+id/signUpText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
