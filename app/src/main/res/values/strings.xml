@@ -1,3 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">JobLink</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="dont_have_an_account_yet"><font color="#334155">Don\'t have account yet?</font> <font color="#2196F3">Sign up</font></string>
+    <string name="already_have_an_account"><font color="#334155">Already have a account?</font> <font color="#2196F3">Sign in</font></string>
+    <string name="by_signing_up_you_agree"><font color="#334155">By clicking the Sign Up button you have agreed to our</font> <font color="#2196F3">terms</font> <font color="#334155">and</font> <font color="#2196F3">conditions</font></string>
+    <string name="you_have_not_received_the_email"><font color="#334155">You have not received the email?</font> <font color="#2196F3">Resend</font></string>
+    <string name="slider_image_description">Post image</string>
+
 </resources>
