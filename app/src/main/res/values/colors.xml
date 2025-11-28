@@ -5,32 +5,6 @@
     <color name="blue">#167AD8</color>
     <color name="text_ico">#334155</color>
     <color name="milk">#F9FAFB</color>
-    <color name="gray">#E8E8E8</color>
+    <color name="gray">#EFEFEF</color>
     <color name="tran">#00FFFFFF</color>
-
-
-
-    <!--        &lt;!&ndash; Common Basic Colors &ndash;&gt;-->
-    <!--        <color name="white">#FFFFFFFF</color>-->
-    <!--        <color name="black">#FF000000</color>-->
-    <!--        <color name="blue">#167AD8</color>-->
-
-    <!--        &lt;!&ndash; Light Theme Colors &ndash;&gt;-->
-    <!--        <color name="light_primary">#167AD8</color>-->
-    <!--        <color name="light_primary_container">#E3F2FD</color>-->
-    <!--        <color name="light_background">#F9FAFB</color>-->
-    <!--        <color name="light_on_background">#334155</color>-->
-    <!--        <color name="light_surface">#FFFFFF</color>-->
-    <!--        <color name="light_on_surface">#334155</color>-->
-    <!--        <color name="light_button_secondary">#FFFFFF</color>-->
-
-    <!--        &lt;!&ndash; Dark Theme Colors &ndash;&gt;-->
-    <!--        <color name="dark_primary">#5A9EED</color>-->
-    <!--        <color name="dark_primary_container">#1A3E63</color>-->
-    <!--        <color name="dark_background">#111827</color>-->
-    <!--        <color name="dark_on_background">#E5E7EB</color>-->
-    <!--        <color name="dark_surface">#1F2937</color>-->
-    <!--        <color name="dark_on_surface">#F9FAFB</color>-->
-    <!--        <color name="dark_button_secondary">#374151</color>-->
-
 </resources>
