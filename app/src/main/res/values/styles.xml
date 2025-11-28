@@ -86,10 +86,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!--    <style name="DialogAnimation">-->
-    <!--        <item name="android:windowEnterAnimation">@anim/slide_up</item>-->
-    <!--        <item name="android:windowExitAnimation">@anim/slide_down</item>-->
-    <!--    </style>-->
+        <style name="DialogAnimation">
+            <item name="android:windowEnterAnimation">@anim/slide_up</item>
+            <item name="android:windowExitAnimation">@anim/slide_down</item>
+        </style>
 
     <attr name="cardBackground" format="color" />
     <attr name="buttonSecondary" format="color" />
@@ -110,8 +110,29 @@
         <item name="useMaterialThemeColors">false</item>
     </style>
 
+    <style name="CategoryText_Expanded">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:layout_marginTop">4dp</item>
+    </style>
 
+    <style name="CategoryText_Collapsed">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">8dp</item>
+    </style>
 
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:editTextColor">@color/text_ico</item>
+        <item name="android:textColorHint">@color/text_ico</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 
 
 </resources>

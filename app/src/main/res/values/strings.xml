@@ -9,4 +9,42 @@
     <string name="you_have_not_received_the_email"><font color="#334155">You have not received the email?</font> <font color="#2196F3">Resend</font></string>
     <string name="slider_image_description">Post image</string>
 
+
+    <string-array name="provinces">
+        <item>Phnom Penh</item>
+        <item>Banteay Meanchey</item>
+        <item>Battambang</item>
+        <item>Kampong Cham</item>
+        <item>Kampong Chhnang</item>
+        <item>Kampong Speu</item>
+        <item>Kampong Thom</item>
+        <item>Kampot</item>
+        <item>Kandal</item>
+        <item>Kep</item>
+        <item>Koh Kong</item>
+        <item>Kratié</item>
+        <item>Mondulkiri</item>
+        <item>Oddar Meanchey</item>
+        <item>Pailin</item>
+        <item>Preah Sihanouk</item>
+        <item>Preah Vihear</item>
+        <item>Prey Veng</item>
+        <item>Pursat</item>
+        <item>Ratanakiri</item>
+        <item>Siem Reap</item>
+        <item>Stung Treng</item>
+        <item>Svay Rieng</item>
+        <item>Takéo</item>
+        <item>Tboung Khmum</item>
+    </string-array>
+
+    <string-array name="professions">
+        <item>Student</item>
+        <item>Software Developer</item>
+        <item>Teacher</item>
+        <item>Designer</item>
+        <item>Engineer</item>
+        <item>Accountant</item>
+        <item>Other (Custom)</item>
+    </string-array>
 </resources>
