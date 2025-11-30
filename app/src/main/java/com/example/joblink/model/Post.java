@@ -54,8 +54,35 @@ public class Post implements Serializable {
     private String workType;
     private String industry;
     private String experienceLevel;
+    private String phoneNumber;
+    private String email;
+    private String telegramLink;
 
     public Post() {
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelegramLink() {
+        return telegramLink;
+    }
+
+    public void setTelegramLink(String telegramLink) {
+        this.telegramLink = telegramLink;
     }
 
     public double getLatitude() {
@@ -495,5 +522,4 @@ public class Post implements Serializable {
         amenityAirConditioned = amenitiesList.contains("Air-conditioned");
         amenitySafetyEquipment = amenitiesList.contains("Safety equipment");
     }
-
 }

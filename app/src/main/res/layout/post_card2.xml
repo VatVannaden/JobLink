@@ -40,6 +40,19 @@
             app:layout_constraintEnd_toEndOf="@id/post_image"
             app:layout_constraintTop_toTopOf="@id/post_image" />
 
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/icon_bg2"
+            android:contentDescription="Bookmark Post"
+            android:src="@drawable/ico_trash"
+            android:tint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/post_image" />
+
         <TextView
             android:id="@+id/post_title"
             android:layout_width="match_parent"
