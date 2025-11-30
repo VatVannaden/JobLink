@@ -1,8 +1,7 @@
 package com.example.joblink.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.LayoutInflater;import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,8 +21,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private final List<Post> postList;
     private final OnItemClickListener itemClickListener;
     private final OnBookmarkClickListener bookmarkClickListener;
-    private Context context;
+    private final OnDeleteClickListener deleteClickListener;
+    private final Context context;
     private final boolean showBookmark;
+    private boolean isEditMode = false;
 
     public interface OnItemClickListener {
         void onItemClick(Post post);
@@ -33,11 +34,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         void onBookmarkClick(Post post, ImageButton bookmarkButton);
     }
 
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Post post);
+    }
+
     public PostAdapter(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
         this.itemClickListener = null;
         this.bookmarkClickListener = null;
+        this.deleteClickListener = null;
         this.showBookmark = true;
     }
 
@@ -46,6 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.postList = postList;
         this.itemClickListener = itemClickListener;
         this.bookmarkClickListener = bookmarkClickListener;
+        this.deleteClickListener = null;
         this.showBookmark = true;
     }
 
@@ -55,6 +62,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.showBookmark = showBookmark;
         this.itemClickListener = itemClickListener;
         this.bookmarkClickListener = bookmarkClickListener;
+        this.deleteClickListener = null;
+    }
+
+    public PostAdapter(Context context, List<Post> postList, boolean showBookmark, OnItemClickListener itemClickListener, OnBookmarkClickListener bookmarkClickListener, OnDeleteClickListener deleteClickListener) {
+        this.context = context;
+        this.postList = postList;
+        this.showBookmark = showBookmark;
+        this.itemClickListener = itemClickListener;
+        this.bookmarkClickListener = bookmarkClickListener;
+        this.deleteClickListener = deleteClickListener;
+    }
+
+    public void setEditMode(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        notifyDataSetChanged();
     }
 
 
@@ -78,13 +100,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView postImage;
-        ImageButton bookmarkButton;
+        ImageButton bookmarkButton, deleteButton;
         TextView postTitle, postLocation, jobType, salary;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
             postImage = itemView.findViewById(R.id.post_image);
             bookmarkButton = itemView.findViewById(R.id.bookmark_button);
+            deleteButton = itemView.findViewById(R.id.delete_button);
             postTitle = itemView.findViewById(R.id.post_title);
             postLocation = itemView.findViewById(R.id.textView4);
             jobType = itemView.findViewById(R.id.jobType);
@@ -108,7 +131,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
 
             itemView.setOnClickListener(v -> {
-                if (itemClickListener != null) {
+                if (itemClickListener != null && !isEditMode) {
                     itemClickListener.onItemClick(post);
                 }
             });
@@ -123,6 +146,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 });
             } else {
                 bookmarkButton.setVisibility(View.GONE);
+            }
+
+            if (isEditMode) {
+                deleteButton.setVisibility(View.VISIBLE);
+                deleteButton.setOnClickListener(v -> {
+                    if (deleteClickListener != null) {
+                        deleteClickListener.onDeleteClick(post);
+                    }
+                });
+            } else {
+                deleteButton.setVisibility(View.GONE);
             }
         }
     }

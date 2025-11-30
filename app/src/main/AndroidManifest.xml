@@ -31,7 +31,7 @@
         android:theme="@style/Theme.JobLink">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAyfVcQwXQncqPLwOvt4b2U1PUn19fNWfA" />
+            android:value="API_KEY" />
 
         <activity
             android:name=".activity.FullScreenImageActivity"

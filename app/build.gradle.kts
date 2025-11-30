@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.coordinatorlayout)
     implementation(libs.gridlayout)
     implementation("com.airbnb.android:lottie:6.7.1")
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 
     implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-auth")
