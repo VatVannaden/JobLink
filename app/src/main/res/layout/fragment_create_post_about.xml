@@ -1,0 +1,1232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/milk"
+    tools:context=".fragment.CreatePostAboutFragment">
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/open_sans"
+        android:text="What's your job type?"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20">
+
+        <EditText
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:fontFamily="@font/open_sans"
+            android:singleLine="true"
+            android:inputType="text"
+            android:hint="Post title"
+            android:padding="20dp"
+            android:textSize="12sp"
+            android:ellipsize="end"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <EditText
+            android:id="@+id/descriptionText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:fontFamily="@font/open_sans"
+            android:gravity="top"
+            android:hint="Description"
+            android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:padding="20dp"
+            android:scrollHorizontally="true"
+            android:textSize="12sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/businessName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description">
+
+        <EditText
+            android:id="@+id/businessNameText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:fontFamily="@font/open_sans"
+            android:hint="Business name"
+            android:ellipsize="end"
+            android:inputType="text"
+            android:singleLine="true"
+            android:padding="20dp"
+            android:textSize="12sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/categoryCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/businessName">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:paddingBottom="16dp"
+                android:text="Type"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- =================================================== FULL TIME GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/fullTimeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Technology -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioTechnology"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Technology" />
+                    </LinearLayout>
+
+                    <!-- Finance -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFinance"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Finance" />
+                    </LinearLayout>
+
+                    <!-- Medical -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioMedical"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Medical" />
+                    </LinearLayout>
+
+                    <!-- Education -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioEducation"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Education" />
+                    </LinearLayout>
+
+                    <!-- Agriculture -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioAgriculture"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Agriculture" />
+                    </LinearLayout>
+
+                    <!-- Engineering -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioEngineering"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Engineering" />
+                    </LinearLayout>
+
+                    <!-- Hospitality -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioHospitality"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Hospitality" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOther"
+                            style="@style/CategoryRadioButton"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Full Time Other EditText -->
+                <EditText
+                    android:id="@+id/fullTimeOtherEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+            <!-- =================================================== PART-TIME GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/partTimeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Technology -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartTechnology"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Technology" />
+                    </LinearLayout>
+
+                    <!-- Digital Marketing -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartDigitalMarketing"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Digital Marketing" />
+                    </LinearLayout>
+
+                    <!-- Writing -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartWriting"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Writing" />
+                    </LinearLayout>
+
+                    <!-- Project Management -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartProjectManagement"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Project Management" />
+                    </LinearLayout>
+
+                    <!-- Online Tutoring -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartOnlineTutoring"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Online Tutoring" />
+                    </LinearLayout>
+
+                    <!-- Graphic Design -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartGraphicDesign"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Graphic Design" />
+                    </LinearLayout>
+
+                    <!-- Virtual Assistant -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartVirtualAssistant"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Virtual Assistant" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioPartOther"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Part Time Other EditText -->
+                <EditText
+                    android:id="@+id/partTimeOtherEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+            <!-- =================================================== INTERNSHIP GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/internshipRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Technology -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternTechnology"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Technology" />
+                    </LinearLayout>
+
+                    <!-- Marketing -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternMarketing"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Marketing" />
+                    </LinearLayout>
+
+                    <!-- Finance -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternFinance"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Finance" />
+                    </LinearLayout>
+
+                    <!-- Education -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternEducation"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Education" />
+                    </LinearLayout>
+
+                    <!-- Medical -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternMedical"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Medical" />
+                    </LinearLayout>
+
+                    <!-- Agriculture -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternAgriculture"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Agriculture" />
+                    </LinearLayout>
+
+                    <!-- Hospitality -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternHospitality"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Hospitality" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioInternOther"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Internship Other EditText -->
+                <EditText
+                    android:id="@+id/internshipOtherEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+            <!-- =================================================== VOLUNTEER GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/volunteerRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Community Service -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerCommunity"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Community Service" />
+                    </LinearLayout>
+
+                    <!-- Nonprofit -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerNonprofit"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Nonprofit" />
+                    </LinearLayout>
+
+                    <!-- Health Awareness -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerHealth"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Health Awareness" />
+                    </LinearLayout>
+
+                    <!-- Education -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerEducation"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Education" />
+                    </LinearLayout>
+
+                    <!-- Environment -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerEnvironment"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Environment" />
+                    </LinearLayout>
+
+                    <!-- Event Assistance -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerEvent"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Event Assistance" />
+                    </LinearLayout>
+
+                    <!-- Sport Events -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerSport"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Sport Events" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioVolunteerOther"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Volunteer Other EditText -->
+                <EditText
+                    android:id="@+id/volunteerOtherEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+            <!-- =================================================== FREELANCE GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/freelanceRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Technology -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceTechnology"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Technology" />
+                    </LinearLayout>
+
+                    <!-- Digital Marketing -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceDigitalMarketing"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Digital Marketing" />
+                    </LinearLayout>
+
+                    <!-- Writing -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceWriting"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Writing" />
+                    </LinearLayout>
+
+                    <!-- Project Management -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceProjectManagement"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Project Management" />
+                    </LinearLayout>
+
+                    <!-- Online Tutoring -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceOnlineTutoring"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Online Tutoring" />
+                    </LinearLayout>
+
+                    <!-- Graphic Design -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceGraphicDesign"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Graphic Design" />
+                    </LinearLayout>
+
+                    <!-- Virtual Assistant -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceVirtualAssistant"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Virtual Assistant" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFreelanceOther"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Freelance Other EditText -->
+                <EditText
+                    android:id="@+id/freelanceOtherEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+            <!-- =================================================== OTHER TYPE GRID =================================================== -->
+            <RadioGroup
+                android:id="@+id/otherTypeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alignmentMode="alignBounds"
+                    android:columnCount="2">
+
+                    <!-- Freelance -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypePainter"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Painter" />
+                    </LinearLayout>
+
+                    <!-- Seasonal work -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeSeasonal"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Seasonal work" />
+                    </LinearLayout>
+
+                    <!-- Daily Labor -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeDailyLabor"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Daily Labor" />
+                    </LinearLayout>
+
+                    <!-- Transport -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeTransport"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Transport" />
+                    </LinearLayout>
+
+                    <!-- Repair -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeRepair"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Repair" />
+                    </LinearLayout>
+
+                    <!-- Photographer -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypePhotographer"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Photographer" />
+                    </LinearLayout>
+
+                    <!-- Child care -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeChildCare"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Child care" />
+                    </LinearLayout>
+
+                    <!-- Other -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/type_radio_bg"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioOtherTypeOther"
+                            style="@style/CategoryRadioButton"
+                            android:button="@drawable/custom_radio_selector"
+                            android:layoutDirection="rtl"
+                            android:text="Other" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <!-- Other Type EditText -->
+                <EditText
+                    android:id="@+id/otherTypeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Specify your category"
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintStart_toStartOf="@+id/categoryCard"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingVertical="10dp"
+                android:background="@color/white"
+                android:fontFamily="@font/dm_sans"
+                android:paddingHorizontal="20dp"
+                android:text="Back"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/nextButton"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/step"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step 1 of 5"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:progress="20"
+                android:max="100"
+                android:progressDrawable="@drawable/custom_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/step" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="30dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingVertical="10dp"
+                android:background="@color/blue"
+                android:fontFamily="@font/dm_sans"
+                android:textColor="@color/white"
+                android:paddingHorizontal="20dp"
+                android:text="Next"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

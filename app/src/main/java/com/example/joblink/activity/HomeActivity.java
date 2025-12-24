@@ -11,8 +11,8 @@ import com.example.joblink.R;
 import com.example.joblink.databinding.ActivityHomeBinding;
 import com.example.joblink.fragment.BookmarksFragment;
 import com.example.joblink.fragment.CreatePostFragment;
-import com.example.joblink.fragment.ExploreFragment;
-import com.example.joblink.fragment.MessageFragment;
+import com.example.joblink.fragment.HomeFragment;
+import com.example.joblink.fragment.SearchFragment;
 import com.example.joblink.fragment.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity {
@@ -27,19 +27,18 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set the listener for bottom navigation item selection
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Fragment selectedFragment = null;
 
             if (itemId == R.id.nav_home) {
-                selectedFragment = new ExploreFragment();
-            } else if (itemId == R.id.nav_bookmarks) {
-                selectedFragment = new BookmarksFragment();
+                selectedFragment = new HomeFragment();
+            } else if (itemId == R.id.nav_search) {
+                selectedFragment = new SearchFragment();
             } else if (itemId == R.id.nav_create) {
                 selectedFragment = new CreatePostFragment();
-            } else if (itemId == R.id.nav_messages) {
-                selectedFragment = new MessageFragment();
+            } else if (itemId == R.id.nav_bookmark) {
+                selectedFragment = new BookmarksFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }
@@ -51,20 +50,20 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
-        // Set the default selected item
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+        if (savedInstanceState == null) {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+        }
 
-        // Add a listener to handle back stack changes
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFragment);
-            if (currentFragment instanceof ExploreFragment) {
+            if (currentFragment instanceof HomeFragment) {
                 binding.bottomNavigation.getMenu().findItem(R.id.nav_home).setChecked(true);
-            } else if (currentFragment instanceof BookmarksFragment) {
-                binding.bottomNavigation.getMenu().findItem(R.id.nav_bookmarks).setChecked(true);
+            } else if (currentFragment instanceof SearchFragment) {
+                binding.bottomNavigation.getMenu().findItem(R.id.nav_search).setChecked(true);
             } else if (currentFragment instanceof CreatePostFragment) {
                 binding.bottomNavigation.getMenu().findItem(R.id.nav_create).setChecked(true);
-            } else if (currentFragment instanceof MessageFragment) {
-                binding.bottomNavigation.getMenu().findItem(R.id.nav_messages).setChecked(true);
+            } else if (currentFragment instanceof BookmarksFragment) {
+                binding.bottomNavigation.getMenu().findItem(R.id.nav_bookmark).setChecked(true);
             } else if (currentFragment instanceof ProfileFragment) {
                 binding.bottomNavigation.getMenu().findItem(R.id.nav_profile).setChecked(true);
             }
@@ -74,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
     public void LoadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.mainFragment, fragment)
-                .addToBackStack(null) // This is crucial for the back button to work
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -84,11 +83,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Handle back press to navigate through the fragment back stack
         if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             super.onBackPressed();
         } else {
-            finish(); // Exit the app if there are no more fragments in the back stack
+            finish();
         }
     }
 }
