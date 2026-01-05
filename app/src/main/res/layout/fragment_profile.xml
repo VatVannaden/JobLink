@@ -1,14 +1,284 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/milk"
     tools:context=".fragment.ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout5"
+            android:layout_width="match_parent"
+            android:layout_height="111dp"
+            android:background="@drawable/top_sec"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/topTx"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginBottom="26dp"
+                android:fontFamily="@font/dm_sans"
+                android:text="Profile"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- PROFILE CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profileCard"
+            android:layout_width="372dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="131dp"
+            android:layout_marginHorizontal="20dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/user_bg1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:background="@color/gray"
+                    app:shapeAppearanceOverlay="@style/corner"
+                    app:strokeColor="@color/gray"
+                    app:strokeWidth="1dp" />
+
+                <TextView
+                    android:id="@+id/profileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vat Vannaden"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:fontFamily="@font/dm_sans"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_ico"
+                    android:gravity="center"
+                    android:layout_marginVertical="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:alpha="0.8"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/profileGender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_ico"
+                        android:gravity="center"/>
+
+                    <ImageView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="@drawable/tx_separate_o" />
+
+                    <TextView
+                        android:id="@+id/profileAge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_ico"
+                        android:gravity="center"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- HISTORY CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/historyCard"
+            android:layout_width="178dp"
+            android:layout_height="178dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/user_bg1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:src="@drawable/ico_history" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/dm_sans"
+                    android:maxLines="1"
+                    android:text="History"
+                    android:textColor="@color/text_ico"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- NOTIFICATION CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/editProfile"
+            android:layout_width="178dp"
+            android:layout_height="178dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/user_bg1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:background="@drawable/edit_profile" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/dm_sans"
+                    android:maxLines="1"
+                    android:text="Edit profle"
+                    android:textColor="@color/text_ico"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- MY POST CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/myPostCard"
+            android:layout_width="372dp"
+            android:layout_height="250dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editProfile">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/user_bg1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ico_my_post"
+                    app:shapeAppearanceOverlay="@style/corner"
+                    app:strokeColor="@color/gray"
+                    app:strokeWidth="1dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/dm_sans"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="My posts"
+                    android:textColor="@color/text_ico"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/postCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textColor="@color/text_ico"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="20dp"
+            android:src="@drawable/separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myPostCard" />
+
+
+        <LinearLayout
+            android:id="@+id/signOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ico_logout" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:text="Sign out"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

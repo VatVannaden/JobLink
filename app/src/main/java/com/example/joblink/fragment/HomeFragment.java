@@ -74,14 +74,14 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setupFeaturedJobs();
-        setupRecentJobs();
+//        setupFeaturedJobs();
+//        setupRecentJobs();
         setupCategoryClickListeners();
         setupLocationClickListener();
         setupScrollListener();
         selectCategory(R.id.all);
         setupFirebaseListeners();
-        setupSearchNavigation();
+//        setupSearchNavigation();
     }
 
     private void setupLocationClickListener() {
@@ -266,19 +266,19 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void setupFeaturedJobs() {
-        if (binding == null) return;
-        binding.featuredJobsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        featuredJobsAdapter = new FeaturedJobsAdapter(getContext(), featuredPosts, this::navigateToPostDetail, this::toggleBookmark);
-        binding.featuredJobsRecyclerView.setAdapter(featuredJobsAdapter);
-    }
-
-    private void setupRecentJobs() {
-        if (binding == null) return;
-        binding.recentJobsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        postAdapter = new PostAdapter(getContext(), recentPosts, this::navigateToPostDetail, this::toggleBookmark);
-        binding.recentJobsRecyclerView.setAdapter(postAdapter);
-    }
+//    private void setupFeaturedJobs() {
+//        if (binding == null) return;
+//        binding.featuredJobsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//        featuredJobsAdapter = new FeaturedJobsAdapter(getContext(), featuredPosts, this::navigateToPostDetail, this::toggleBookmark);
+//        binding.featuredJobsRecyclerView.setAdapter(featuredJobsAdapter);
+//    }
+//
+//    private void setupRecentJobs() {
+//        if (binding == null) return;
+//        binding.recentJobsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+//        postAdapter = new PostAdapter(getContext(), recentPosts, this::navigateToPostDetail, this::toggleBookmark);
+//        binding.recentJobsRecyclerView.setAdapter(postAdapter);
+//    }
 
     @Override
     public void onDestroyView() {
@@ -295,20 +295,20 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    private void navigateToPostDetail(Post post) {
-        if (!isAdded() || post == null || post.getPostId() == null) {
-            Log.w("HomeFragment", "Navigation cancelled. Fragment not attached or post invalid.");
-            return;
-        }
-        PostDetailFragment postDetailFragment = new PostDetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("postId", post.getPostId());
-        postDetailFragment.setArguments(bundle);
-        getParentFragmentManager().beginTransaction()
-                .replace(R.id.mainFragment, postDetailFragment)
-                .addToBackStack("home")
-                .commit();
-    }
+//    private void navigateToPostDetail(Post post) {
+//        if (!isAdded() || post == null || post.getPostId() == null) {
+//            Log.w("HomeFragment", "Navigation cancelled. Fragment not attached or post invalid.");
+//            return;
+//        }
+//        PostDetailFragment postDetailFragment = new PostDetailFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("postId", post.getPostId());
+//        postDetailFragment.setArguments(bundle);
+//        getParentFragmentManager().beginTransaction()
+//                .replace(R.id.mainFragment, postDetailFragment)
+//                .addToBackStack("home")
+//                .commit();
+//    }
 
     private void toggleBookmark(Post post, ImageButton bookmarkButton) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -436,16 +436,16 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void setupSearchNavigation() {
-        if (binding == null) return;
-        binding.searchBar.setOnClickListener(v -> {
-            if (getParentFragmentManager() != null) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainFragment, new SearchFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-    }
+//    private void setupSearchNavigation() {
+//        if (binding == null) return;
+//        binding.searchBar.setOnClickListener(v -> {
+//            if (getParentFragmentManager() != null) {
+//                getParentFragmentManager().beginTransaction()
+//                        .replace(R.id.mainFragment, new SearchFragment())
+//                        .addToBackStack(null)
+//                        .commit();
+//            }
+//        });
+//    }
 
 }

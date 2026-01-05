@@ -12,7 +12,7 @@ import com.example.joblink.databinding.ActivityHomeBinding;
 import com.example.joblink.fragment.BookmarksFragment;
 import com.example.joblink.fragment.CreatePostFragment;
 import com.example.joblink.fragment.HomeFragment;
-import com.example.joblink.fragment.SearchFragment;
+//import com.example.joblink.fragment.SearchFragment;
 import com.example.joblink.fragment.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity {
@@ -33,8 +33,8 @@ public class HomeActivity extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
-            } else if (itemId == R.id.nav_search) {
-                selectedFragment = new SearchFragment();
+//            } else if (itemId == R.id.nav_search) {
+//                selectedFragment = new SearchFragment();
             } else if (itemId == R.id.nav_create) {
                 selectedFragment = new CreatePostFragment();
             } else if (itemId == R.id.nav_bookmark) {
@@ -58,8 +58,8 @@ public class HomeActivity extends AppCompatActivity {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFragment);
             if (currentFragment instanceof HomeFragment) {
                 binding.bottomNavigation.getMenu().findItem(R.id.nav_home).setChecked(true);
-            } else if (currentFragment instanceof SearchFragment) {
-                binding.bottomNavigation.getMenu().findItem(R.id.nav_search).setChecked(true);
+//            } else if (currentFragment instanceof SearchFragment) {
+//                binding.bottomNavigation.getMenu().findItem(R.id.nav_search).setChecked(true);
             } else if (currentFragment instanceof CreatePostFragment) {
                 binding.bottomNavigation.getMenu().findItem(R.id.nav_create).setChecked(true);
             } else if (currentFragment instanceof BookmarksFragment) {

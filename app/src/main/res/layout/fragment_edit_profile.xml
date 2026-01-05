@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/milk"
+    android:orientation="vertical"
+    tools:context=".fragment.EditProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout8"
+        android:layout_width="match_parent"
+        android:layout_height="111dp"
+        android:background="@drawable/top_sec"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView12"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="20dp"
+            android:rotation="90"
+            android:layout_marginBottom="26dp"
+            android:src="@drawable/ico_arrow1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/topTx"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/dm_sans"
+            android:text="Edit Profile"
+            android:textColor="@color/text_ico"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView12"
+            app:layout_constraintStart_toEndOf="@+id/imageView12"
+            app:layout_constraintTop_toTopOf="@+id/imageView12" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:gravity="top"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profileCard"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginHorizontal="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/user_bg1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img"
+                        app:shapeAppearanceOverlay="@style/corner"
+                        app:strokeColor="@color/gray"
+                        app:strokeWidth="1dp" />
+
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="Vat Vannaden"
+                        android:textColor="@color/text_ico"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.8"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/profileGender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="Male"
+                            android:textColor="@color/text_ico"
+                            android:textSize="15sp" />
+
+                        <ImageView
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginHorizontal="10dp"
+                            android:background="@drawable/tx_separate_o" />
+
+                        <TextView
+                            android:id="@+id/profileAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="20"
+                            android:textColor="@color/text_ico"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/changePhotoButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:layout_marginVertical="5dp"
+                        android:background="@drawable/change_img_btn"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="15dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/ico_gallery" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/update_btn"
+                            android:fontFamily="@font/dm_sans"
+                            android:gravity="center"
+                            android:text="Change profile picture"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:backgroundTint="@null" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Username Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change username"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Username"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/newUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter new username"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/passwordUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter Password to confirm"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangeUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="10dp"
+                        android:backgroundTint="@color/blue"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Update"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Gender Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="94dp"
+                android:layout_marginHorizontal="20dp"    android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change gender"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupGender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioMale"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:button="@drawable/custom_radio_selector"
+                            android:text=" Male"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp"
+                            app:buttonTint="@null"
+                            app:useMaterialThemeColors="false" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radioFemale"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:button="@drawable/custom_radio_selector"
+                            android:text=" Female"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp"
+                            app:buttonTint="@null"
+                            app:useMaterialThemeColors="false" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- Location Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change location"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/editLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center|left"
+                        android:drawableEnd="@drawable/ico_arrow1"
+                        android:focusable="false"
+                        android:text="Phnom penh"
+                        android:paddingHorizontal="20dp"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/labelLocation" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Birthday Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change birth date"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/editBirthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center|left"
+                        android:drawableEnd="@drawable/ico_arrow1"
+                        android:focusable="false"
+                        android:text="28 • 11 • 2004"
+                        android:paddingHorizontal="20dp"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/labelLocation" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Profession Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change profession"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/editProfession"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center|left"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/white"
+                        android:drawableEnd="@drawable/ico_arrow1"
+                        android:text="profession"
+                        android:inputType="textCapWords"
+                        android:maxLines="1"
+                        android:paddingHorizontal="20dp"
+                        android:textSize="16sp" />
+
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Phone Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change phone number"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Phone number"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/newPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter new phone number"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/passwordPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter Password to confirm"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="10dp"
+                        android:backgroundTint="@color/blue"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Update"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Password Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="40dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/user_bg1"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Old password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/oldPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter your old password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="New Password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/newPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Enter new password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Confirm Password"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/confirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/label"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center|start"
+                        android:hint="Re-enter your new password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/text_ico"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="10dp"
+                        android:backgroundTint="@color/blue"
+                        android:fontFamily="@font/dm_sans"
+                        android:gravity="center"
+                        android:text="Change password"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

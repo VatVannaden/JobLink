@@ -56,8 +56,6 @@
             android:src="@drawable/ico_user" />
     </LinearLayout>
 
-
-
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
@@ -99,7 +97,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelPhoneNumber" />
-    <!-- Gender Selection -->
+
     <TextView
         android:id="@+id/labelGender"
         style="@style/label_tx"
@@ -214,21 +212,24 @@
         app:layout_constraintStart_toStartOf="@+id/editTextProfession"
         app:layout_constraintTop_toBottomOf="@+id/dateOfBirth" />
 
-    <EditText
+    <TextView
         android:id="@+id/editTextProfession"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/label"
-        android:hint="Enter your profession"
-        android:inputType="textCapWords"
+        android:gravity="center|start"
+        android:hint="Select your profession"
         android:maxLines="1"
+        android:drawableEnd="@drawable/ico_arrow1"
         android:paddingHorizontal="20dp"
+        android:focusable="false"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelProfession" />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/confirmButton"
@@ -243,5 +244,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextProfession" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieLoading"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_animation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/loadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Saving Profile..."
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lottieLoading" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
