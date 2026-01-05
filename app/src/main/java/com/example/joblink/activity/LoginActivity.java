@@ -1,21 +1,17 @@
 package com.example.joblink.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.Bundle;import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.joblink.activity.CreateAccountActivity;
-import com.example.joblink.activity.HomeActivity;
 import com.example.joblink.databinding.ActivityLoginBinding;
-
-import android.text.TextUtils;
-import android.widget.Toast;
-
-import android.util.Patterns;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
-
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -30,21 +26,26 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        binding.signInButton.setOnClickListener(v -> userLogin());
-
-        binding.signUpTx.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
-        });
-
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
+            navigateToHome();
+            return;
         }
 
-        binding.skip.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, HomeActivity.class)));
+        setupClickListeners();
+    }
+
+    private void setupClickListeners() {
+        binding.signInButton.setOnClickListener(v -> userLogin());
+        binding.signUpTx.setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class))
+        );
+        binding.skip.setOnClickListener(v -> navigateToHome());
     }
 
     private void userLogin() {
+        binding.txEmail.setError(null);
+        binding.txPassword.setError(null);
+
         String email = binding.txEmail.getText().toString().trim();
         String password = binding.txPassword.getText().toString().trim();
 
@@ -66,21 +67,40 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        setLoadingState(true);
         loginWithEmail(email, password);
     }
 
     private void loginWithEmail(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
+                .addOnCompleteListener(this, task -> {
+                    setLoadingState(false);
+
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(intent);
-                        finish();
+                        navigateToHome();
                     } else {
-                        Toast.makeText(this, "Login failed: " +
-                                Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                        String errorMessage = "Authentication failed. Please re-check your Email or Password.";
+                        if (task.getException() != null) {
+                            System.err.println("Login Error: " + task.getException().getMessage());
+                        }
+
+                        if (!isFinishing() && !isDestroyed()) {
+                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
+    }
+
+    private void navigateToHome() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void setLoadingState(boolean isLoading) {
+        binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        binding.signInButton.setEnabled(!isLoading);
     }
 }
