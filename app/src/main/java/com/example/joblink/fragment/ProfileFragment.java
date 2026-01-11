@@ -124,8 +124,8 @@ public class ProfileFragment extends Fragment {
 
     private void setupClickListeners() {
         profileCard.setOnClickListener(v -> navigateTo(new UserInformationFragment(), "user_info"));
-//        historyCard.setOnClickListener(v -> navigateTo(new HistoryFragment(), "history"));
-//        myPostCard.setOnClickListener(v -> navigateTo(new MyPostFragment(), "my_post"));
+        historyCard.setOnClickListener(v -> navigateTo(new HistoryFragment(), "history"));
+        myPostCard.setOnClickListener(v -> navigateTo(new MyPostFragment(), "my_post"));
         editAccount.setOnClickListener(v -> navigateTo(new EditProfileFragment(), "edit_profile"));
 
         signOut.setOnClickListener(v -> {
