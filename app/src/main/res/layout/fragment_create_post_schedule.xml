@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/milk"
+    tools:context=".fragment.CreatePostScheduleFragment">
+
+    <!-- All other views (TextView, hour/day, salary, etc.) remain the same -->
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/open_sans"
+        android:text="Schedule and pay "
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/hourPerDay"
+            android:layout_width="178dp"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <EditText
+                android:id="@+id/hourPerDayText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:hint="Hour per day"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:paddingHorizontal="20dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textSize="12sp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/dayPerWeek"
+            android:layout_width="178dp"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <EditText
+                android:id="@+id/dayPerWeekText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:hint="Day per week"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:paddingHorizontal="20dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textSize="12sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/writeSomething"
+            android:layout_width="178dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/flexibleDayOff"
+                style="@style/CategoryRadioButton"
+                android:button="@drawable/custom_radio_selector"
+                android:layoutDirection="rtl"
+                android:text="Flexible day off" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/salaryCard"
+            android:layout_width="178dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/salary"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:drawableStart="@drawable/dollar"
+                android:drawableEnd="@drawable/ico_arrow1"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:hint=" Salary/month"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingHorizontal="20dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textSize="12sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/benefitCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:paddingBottom="16dp"
+                android:text="Benefits"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- RadioGroup has been REMOVED. This allows multiple selections. -->
+            <GridLayout
+                android:id="@+id/benefitsGridLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alignmentMode="alignBounds"
+                android:columnCount="2">
+
+                <!-- All your LinearLayouts containing MaterialRadioButtons go here... -->
+                <!-- Health insurance -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioHealthInsurance"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Health insurance" />
+                </LinearLayout>
+
+                <!-- Monthly bonus -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioMonthlyBonus"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Monthly bonus" />
+                </LinearLayout>
+
+                <!-- ... and so on for all other benefits ... -->
+                <!-- End-of-year bonus -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioEndOfYearBonus"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="End-of-year bonus" />
+                </LinearLayout>
+
+                <!-- Overtime pay -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioOvertimePay"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Overtime pay" />
+                </LinearLayout>
+
+                <!-- Holiday -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioHoliday"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Holiday" />
+                </LinearLayout>
+
+                <!-- Staff discounts -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioStaffDiscounts"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Staff discounts" />
+                </LinearLayout>
+
+                <!-- Free meal -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioFreeMeal"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Free meal" />
+                </LinearLayout>
+
+                <!-- Equipment provided -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioEquipmentProvided"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Equipment provided" />
+                </LinearLayout>
+
+                <!-- Internet allowance -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioInternetAllowance"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Internet allowance" />
+                </LinearLayout>
+
+                <!-- Accommodation -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioAccommodation"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Accommodation" />
+                </LinearLayout>
+
+                <!-- Hotel provided -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioHotelProvided"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Hotel provided" />
+                </LinearLayout>
+
+                <!-- Certificate -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioCertificate"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Certificate" />
+                </LinearLayout>
+
+                <!-- Uniform provided -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioUniformProvided"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Uniform provided" />
+                </LinearLayout>
+
+                <!-- Transport provided -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/type_radio_bg"
+                    android:gravity="center">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioTransportProvided"
+                        style="@style/CategoryRadioButton"
+                        android:button="@drawable/custom_radio_selector"
+                        android:layoutDirection="rtl"
+                        android:text="Transport provided" />
+                </LinearLayout>
+
+
+            </GridLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- The rest of your layout (Back/Next buttons) remains the same -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:fontFamily="@font/dm_sans"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="Back"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/nextButton"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/step"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step 3 of 5"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="60"
+                android:progressDrawable="@drawable/custom_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/step" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/blue"
+                android:fontFamily="@font/dm_sans"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="Next"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
