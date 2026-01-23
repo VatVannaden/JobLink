@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/milk"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.UserInformationFragment">
+    tools:context=".view.activity.fragment.UserInformationFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/main"
     android:background="@drawable/start_sc_img1"
-    tools:context=".activity.StartScreen1Activity"
+    tools:context=".view.activity.StartScreen1Activity"
     tools:ignore="Overdraw">
 
     <LinearLayout

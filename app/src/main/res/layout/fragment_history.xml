@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/milk"
     android:orientation="vertical"
-    tools:context=".fragment.MyPostFragment">
+    tools:context=".view.activity.fragment.MyPostFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout8"

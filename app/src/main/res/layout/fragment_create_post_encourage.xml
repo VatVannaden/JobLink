@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/milk"
-    tools:context=".fragment.CreatePostEncourageFragment">
+    tools:context=".view.activity.fragment.CreatePostEncourageFragment">
 
     <TextView
         android:id="@+id/textView20"

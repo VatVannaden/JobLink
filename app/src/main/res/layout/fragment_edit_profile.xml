@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/milk"
     android:orientation="vertical"
-    tools:context=".fragment.EditProfileFragment">
+    tools:context=".view.activity.fragment.EditProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout8"

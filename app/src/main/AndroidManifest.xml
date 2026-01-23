@@ -36,11 +36,11 @@
         <!--        remove before pushing to GitHub-->
 
         <activity
-            android:name=".activity.FullScreenImageActivity"
+            android:name=".view.activity.FullScreenImageActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".view.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -50,35 +50,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.WelcomeScreenActivity"
+            android:name=".view.activity.WelcomeScreenActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.CompleteProfileActivity"
+            android:name=".view.activity.CompleteProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".view.activity.HomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".view.activity.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.CreateAccountActivity"
+            android:name=".view.activity.CreateAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.StartScreen1Activity"
+            android:name=".view.activity.StartScreen1Activity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.StartScreen2Activity"
+            android:name=".view.activity.StartScreen2Activity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.StartScreen3Activity"
+            android:name=".view.activity.StartScreen3Activity"
             android:exported="false"
             android:screenOrientation="portrait" />
     </application>
