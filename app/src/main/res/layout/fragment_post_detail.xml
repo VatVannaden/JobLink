@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Image Slider inside NestedScrollView (like CreatePostReviewFragment) -->
+            <!-- Image Slider inside NestedScrollView -->
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"
@@ -180,8 +180,8 @@
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
                                     android:layout_gravity="center"
-                                    android:tint="@color/text_ico"
                                     android:src="@drawable/custom_bookmarks_selector"
+                                    app:tint="@color/text_ico"
                                     tools:ignore="ContentDescription" />
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
@@ -630,10 +630,20 @@
                     android:layout_height="220dp"
                     app:cardCornerRadius="20dp">
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/mapView"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent">
+
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/mapView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <View
+                            android:id="@+id/mapOverlay"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
                 </androidx.cardview.widget.CardView>
 
                 <View
@@ -643,47 +653,109 @@
                     android:background="#E0E0E0" />
 
                 <!-- Employer Info Section -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
+                    android:id="@+id/employerInfoSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_marginTop="20dp"
                     android:paddingBottom="20dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/employerProfileImage"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/img"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:shapeAppearanceOverlay="@style/corner" />
-
                     <TextView
-                        android:id="@+id/employerUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="15dp"
                         android:fontFamily="@font/dm_sans"
-                        android:text="Username"
+                        android:text="Employer Info"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/employerProfileImage"
-                        app:layout_constraintTop_toTopOf="@+id/employerProfileImage" />
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/employerProfileImage"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:shapeAppearanceOverlay="@style/corner" />
+
+                        <TextView
+                            android:id="@+id/employerUsername"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:fontFamily="@font/dm_sans"
+                            android:text="Username"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/employerProfileImage"
+                            app:layout_constraintTop_toTopOf="@+id/employerProfileImage" />
+
+                        <TextView
+                            android:id="@+id/employerProfession"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Employer"
+                            android:textColor="@color/text_ico"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="@+id/employerUsername"
+                            app:layout_constraintTop_toBottomOf="@+id/employerUsername" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <LinearLayout
+                        android:id="@+id/employerContactInfo"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/open_sans"
-                        android:text="Employer"
-                        android:textColor="@color/text_ico"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="@+id/employerUsername"
-                        app:layout_constraintTop_toBottomOf="@+id/employerUsername" />
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp">
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/employerEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Email"
+                            android:textColor="@color/text_ico"
+                            android:textSize="14sp"
+                            app:drawableStartCompat="@drawable/ico_email" />
+
+                        <TextView
+                            android:id="@+id/employerPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Phone"
+                            android:textColor="@color/text_ico"
+                            android:textSize="14sp"
+                            app:drawableStartCompat="@drawable/ico_phone" />
+
+                        <TextView
+                            android:id="@+id/employerLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Location"
+                            android:textColor="@color/text_ico"
+                            android:textSize="14sp"
+                            app:drawableStartCompat="@drawable/ico_location" />
+                    </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>

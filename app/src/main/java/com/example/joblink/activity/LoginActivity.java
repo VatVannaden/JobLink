@@ -1,22 +1,24 @@
 package com.example.joblink.activity;
 
 import android.content.Intent;
-import android.os.Bundle;import android.text.TextUtils;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.joblink.R;
 import com.example.joblink.databinding.ActivityLoginBinding;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private FirebaseAuth mAuth;
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +38,25 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         binding.signInButton.setOnClickListener(v -> userLogin());
+
+        binding.passwordToggle.setOnClickListener(v -> togglePasswordVisibility());
+
         binding.signUpTx.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class))
         );
         binding.skip.setOnClickListener(v -> navigateToHome());
+    }
+
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            binding.txPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            binding.passwordToggle.setImageResource(R.drawable.ico_eye_slash);
+        } else {
+            binding.txPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            binding.passwordToggle.setImageResource(R.drawable.ico_eye_open);
+        }
+        isPasswordVisible = !isPasswordVisible;
+        binding.txPassword.setSelection(binding.txPassword.getText().length());
     }
 
     private void userLogin() {
@@ -67,28 +84,25 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        setLoadingState(true);
+        setLoadingState(true, null);
         loginWithEmail(email, password);
     }
 
     private void loginWithEmail(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    setLoadingState(false);
-
-                    if (task.isSuccessful()) {
-                        Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
-                        navigateToHome();
-                    } else {
-                        String errorMessage = "Authentication failed. Please re-check your Email or Password.";
-                        if (task.getException() != null) {
-                            System.err.println("Login Error: " + task.getException().getMessage());
+                    Runnable onAnimationComplete = () -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+                            navigateToHome();
+                        } else {
+                            String errorMessage = "Authentication failed. Please re-check your Email or Password.";
+                            if (!isFinishing() && !isDestroyed()) {
+                                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                            }
                         }
-
-                        if (!isFinishing() && !isDestroyed()) {
-                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
-                        }
-                    }
+                    };
+                    setLoadingState(false, onAnimationComplete);
                 });
     }
 
@@ -99,8 +113,32 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setLoadingState(boolean isLoading) {
-        binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    private void setLoadingState(boolean isLoading, Runnable onFinished) {
+        float targetAlpha = isLoading ? 1f : 0f;
+
+        if (isLoading) {
+            binding.loadingOverlay.setVisibility(View.VISIBLE);
+            binding.loadingOverlay.setAlpha(0f);
+            binding.loadingOverlay.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setStartDelay(0)
+                    .start();
+        }
+
         binding.signInButton.setEnabled(!isLoading);
+
+        binding.loadingOverlay.animate()
+                .alpha(targetAlpha)
+                .setDuration(500)
+                .setStartDelay(isLoading ? 0 : 1500)
+                .withEndAction(() -> {
+                    if (!isLoading) {
+                        binding.loadingOverlay.setVisibility(View.GONE);
+                        if (onFinished != null) {
+                            onFinished.run();
+                        }
+                    }
+                });
     }
 }

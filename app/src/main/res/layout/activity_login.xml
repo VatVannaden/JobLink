@@ -99,24 +99,41 @@
         app:layout_constraintStart_toStartOf="@+id/txEmail"
         app:layout_constraintTop_toBottomOf="@+id/txEmail" />
 
-    <EditText
-        android:id="@+id/txPassword"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/label"
-        android:drawableEnd="@drawable/ico_eye_open"
-        android:ems="16"
-        android:hint="Password"
         android:layout_marginHorizontal="20dp"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:paddingHorizontal="20dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        tools:layout_editor_absoluteX="20dp">
+
+        <EditText
+            android:id="@+id/txPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label"
+            android:ems="16"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingHorizontal="20dp"
+            android:paddingEnd="50dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/passwordToggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ico_eye_slash"
+            app:layout_constraintBottom_toBottomOf="@+id/txPassword"
+            app:layout_constraintEnd_toEndOf="@+id/txPassword"
+            app:layout_constraintTop_toTopOf="@+id/txPassword" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/forgotPassword"
@@ -129,8 +146,8 @@
         android:gravity="center_vertical"
         android:text="Forgot Password?"
         android:textAppearance="@style/label_tx"
-        app:layout_constraintEnd_toEndOf="@+id/txPassword"
-        app:layout_constraintTop_toBottomOf="@+id/txPassword" />
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout7"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout7" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signInButton"
@@ -188,7 +205,6 @@
         app:layout_constraintTop_toBottomOf="@+id/googleSignIn" />
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"
@@ -207,6 +223,8 @@
             android:id="@+id/lottieLoading"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:background="@drawable/add_img_bg"
+            android:padding="25dp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loading_animation"
@@ -215,20 +233,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/loadingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Signing in..."
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lottieLoading" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -222,23 +222,34 @@ public class BookmarksFragment extends Fragment implements PostAdapter.OnItemCli
         selectedSortButton = clickedButton;
     }
 
-
     private void fetchBookmarkedPostIds() {
         bookmarksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 bookmarkedPostIds.clear();
+                if (!snapshot.exists() || !snapshot.hasChildren()) {
+                    allBookmarkedPosts.clear();
+                    filteredBookmarkedPosts.clear();
+                    postAdapter.notifyDataSetChanged();
+                    showEmptyState(true);
+                    return;
+                }
+
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     if (postSnapshot.exists() && postSnapshot.getValue(Boolean.class) != null && postSnapshot.getValue(Boolean.class)) {
                         bookmarkedPostIds.add(postSnapshot.getKey());
                     }
                 }
-                fetchFullPosts();
+
+                if (bookmarkedPostIds.isEmpty()) {
+                    showEmptyState(true);
+                } else {
+                    fetchFullPosts();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load bookmark IDs.", Toast.LENGTH_SHORT).show();
                 showEmptyState(true);
             }
         });
@@ -259,7 +270,14 @@ public class BookmarksFragment extends Fragment implements PostAdapter.OnItemCli
                         }
                     }
                 }
-                sortPosts("Date");
+
+                if (allBookmarkedPosts.isEmpty()) {
+                    filteredBookmarkedPosts.clear();
+                    postAdapter.notifyDataSetChanged();
+                    showEmptyState(true);
+                } else {
+                    sortPosts("Date");
+                }
             }
 
             @Override

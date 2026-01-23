@@ -1,9 +1,11 @@
 package com.example.joblink.fragment;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,8 +26,13 @@ import com.example.joblink.viewmodel.CreatePostViewModel;
 import com.example.joblink.model.Post;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CreatePostScheduleFragment extends Fragment {
 
@@ -33,14 +40,18 @@ public class CreatePostScheduleFragment extends Fragment {
     private Post post;
     private ProgressBar progressBar;
     private TextView stepText;
-    private MaterialCardView backButton, nextButton;
-    private EditText hourPerDayText, dayPerWeekText, salaryText;
+    private MaterialCardView backButton, nextButton, durationCard;
+    private TextView startTimeText, endTimeText;
+    private EditText dayPerWeekText, salaryText;
     private RadioButton flexibleDayOff;
 
     private final Map<Integer, String> benefitIdToStringMap = new HashMap<>();
 
     private final int currentStep = 3;
     private final int totalSteps = 6;
+
+    private int startHour = -1, startMinute = -1;
+    private int endHour = -1, endMinute = -1;
 
     @Nullable
     @Override
@@ -65,7 +76,9 @@ public class CreatePostScheduleFragment extends Fragment {
         stepText = view.findViewById(R.id.step);
         backButton = view.findViewById(R.id.backButton);
         nextButton = view.findViewById(R.id.nextButton);
-        hourPerDayText = view.findViewById(R.id.hourPerDayText);
+        durationCard = view.findViewById(R.id.duration);
+        startTimeText = view.findViewById(R.id.startTimeText);
+        endTimeText = view.findViewById(R.id.endTimeText);
         dayPerWeekText = view.findViewById(R.id.dayPerWeekText);
         salaryText = view.findViewById(R.id.salary);
         flexibleDayOff = view.findViewById(R.id.flexibleDayOff);
@@ -92,9 +105,20 @@ public class CreatePostScheduleFragment extends Fragment {
     private void restoreUIState(View view) {
         if (post == null) return;
 
-        hourPerDayText.setText(post.getWorkHours());
-        dayPerWeekText.setText(post.getWorkDays());
+        if (post.getStartTime() != null) startTimeText.setText(post.getStartTime());
+        if (post.getEndTime() != null) endTimeText.setText(post.getEndTime());
+
+        // Restore dayPerWeekText without the suffix for editing
+        String workDays = post.getWorkDays();
+        if (workDays != null && workDays.contains(" days per week")) {
+            dayPerWeekText.setText(workDays.replace(" days per week", ""));
+        } else {
+            dayPerWeekText.setText(workDays);
+        }
+
         salaryText.setText(post.getSalary());
+
+        parseTimesFromPost();
 
         String dayOff = post.getDayOff();
         boolean isFlexibleDayOff = dayOff != null && dayOff.equals("Flexible day off");
@@ -111,6 +135,32 @@ public class CreatePostScheduleFragment extends Fragment {
         }
     }
 
+    private void parseTimesFromPost() {
+        try {
+            Pattern timePattern = Pattern.compile("(\\d{1,2}):(\\d{2})");
+
+            if (post.getStartTime() != null) {
+                Matcher matcher = timePattern.matcher(post.getStartTime());
+                if (matcher.find()) {
+                    startHour = Integer.parseInt(matcher.group(1));
+                    startMinute = Integer.parseInt(matcher.group(2));
+                }
+            }
+
+            if (post.getEndTime() != null) {
+                Matcher matcher = timePattern.matcher(post.getEndTime());
+                if (matcher.find()) {
+                    endHour = Integer.parseInt(matcher.group(1));
+                    endMinute = Integer.parseInt(matcher.group(2));
+                }
+            }
+        } catch (Exception e) {
+            Log.e("CreatePostSchedule", "Error parsing times from post", e);
+            startHour = -1; startMinute = -1;
+            endHour = -1; endMinute = -1;
+        }
+    }
+
     private void setupListeners(View view) {
         backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
         nextButton.setOnClickListener(v -> {
@@ -119,12 +169,21 @@ public class CreatePostScheduleFragment extends Fragment {
             }
         });
 
-        hourPerDayText.addTextChangedListener(new SimpleTextWatcher(s -> post.setWorkHours(s)));
-        dayPerWeekText.addTextChangedListener(new SimpleTextWatcher(s -> post.setWorkDays(s)));
+        durationCard.setOnClickListener(v -> showStartTimePicker());
+
+        dayPerWeekText.addTextChangedListener(new SimpleTextWatcher(s -> {
+            if (!s.isEmpty()) {
+                post.setWorkDays(s + " days per week");
+            } else {
+                post.setWorkDays("");
+            }
+        }));
+
         salaryText.addTextChangedListener(new SimpleTextWatcher(s -> post.setSalary(s)));
 
         flexibleDayOff.setOnClickListener(v -> {
-            boolean wasChecked = (boolean) flexibleDayOff.getTag();
+            Object tag = flexibleDayOff.getTag();
+            boolean wasChecked = tag != null && (boolean) tag;
             boolean isNowChecked = !wasChecked;
 
             flexibleDayOff.setChecked(isNowChecked);
@@ -137,7 +196,8 @@ public class CreatePostScheduleFragment extends Fragment {
             RadioButton radioButton = view.findViewById(benefitId);
             if (radioButton != null) {
                 radioButton.setOnClickListener(v -> {
-                    boolean wasChecked = (boolean) radioButton.getTag();
+                    Object tag = radioButton.getTag();
+                    boolean wasChecked = tag != null && (boolean) tag;
                     boolean isNowChecked = !wasChecked;
 
                     radioButton.setChecked(isNowChecked);
@@ -164,6 +224,73 @@ public class CreatePostScheduleFragment extends Fragment {
         });
     }
 
+    private void showStartTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = startHour != -1 ? startHour : calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = startMinute != -1 ? startMinute : calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), (view, h, m) -> {
+            startHour = h;
+            startMinute = m;
+            String time = String.format(Locale.getDefault(), "%02d:%02d", h, m);
+            startTimeText.setText(time);
+            post.setStartTime(time);
+            showEndTimePicker();
+        }, hour, minute, true);
+        timePickerDialog.setTitle("Select Start Time");
+        timePickerDialog.show();
+    }
+
+    private void showEndTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = endHour != -1 ? endHour : calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = endMinute != -1 ? endMinute : calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), (view, h, m) -> {
+            endHour = h;
+            endMinute = m;
+            String time = String.format(Locale.getDefault(), "%02d:%02d", h, m);
+            endTimeText.setText(time);
+            post.setEndTime(time);
+            calculateAndSetWorkHours();
+        }, hour, minute, true);
+        timePickerDialog.setTitle("Select End Time");
+        timePickerDialog.show();
+    }
+
+    private void calculateAndSetWorkHours() {
+        if (startHour == -1 || endHour == -1) return;
+
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.HOUR_OF_DAY, startHour);
+        start.set(Calendar.MINUTE, startMinute);
+        start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
+
+        Calendar end = Calendar.getInstance();
+        end.set(Calendar.HOUR_OF_DAY, endHour);
+        end.set(Calendar.MINUTE, endMinute);
+        end.set(Calendar.SECOND, 0);
+        end.set(Calendar.MILLISECOND, 0);
+
+        long diffInMillis = end.getTimeInMillis() - start.getTimeInMillis();
+        if (diffInMillis < 0) {
+            diffInMillis += TimeUnit.DAYS.toMillis(1);
+        }
+
+        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+        long hours = diffInMinutes / 60;
+        long minutes = diffInMinutes % 60;
+
+        String workHoursStr;
+        if (minutes == 0) {
+            workHoursStr = String.format(Locale.getDefault(), "%d h, from %s to %s", hours, startTimeText.getText().toString(), endTimeText.getText().toString());
+        } else {
+            workHoursStr = String.format(Locale.getDefault(), "%d h %d m, from %s to %s", hours, minutes, startTimeText.getText().toString(), endTimeText.getText().toString());
+        }
+        post.setWorkHours(workHoursStr);
+    }
+
     private void showSalaryTypeDialog() {
         final String[] salaryTypes = {"/month", "/day", "/hour"};
         new AlertDialog.Builder(requireContext())
@@ -180,8 +307,12 @@ public class CreatePostScheduleFragment extends Fragment {
 
 
     private boolean validateForm() {
-        if (post.getWorkHours() == null || post.getWorkHours().isEmpty()) {
-            Toast.makeText(getContext(), "Please enter hours per day", Toast.LENGTH_SHORT).show();
+        if (post.getStartTime() == null || post.getStartTime().isEmpty()) {
+            Toast.makeText(getContext(), "Please select start time", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (post.getEndTime() == null || post.getEndTime().isEmpty()) {
+            Toast.makeText(getContext(), "Please select end time", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (post.getWorkDays() == null || post.getWorkDays().isEmpty()) {

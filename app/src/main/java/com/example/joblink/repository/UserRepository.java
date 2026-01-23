@@ -33,10 +33,11 @@ public class UserRepository {
             callback.onError(new Exception("No authenticated user found."));
             return;
         }
-        String userId = firebaseUser.getUid();
-        user.setUserId(userId);
 
-        usersRef.child(userId)
+        String uid = firebaseUser.getUid();
+        user.setUid(uid);
+
+        usersRef.child(uid)
                 .setValue(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess(null))
                 .addOnFailureListener(callback::onError);
@@ -51,12 +52,13 @@ public class UserRepository {
             return userLiveData;
         }
 
-        DatabaseReference currentUserRef = usersRef.child(firebaseUser.getUid());
-
-        currentUserRef.addValueEventListener(new ValueEventListener() {
+        // Listens to the 'uid' node in the 'users' root
+        usersRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // Firebase automatically maps DB keys (photoURL, setupComplete, etc.)
+                    // to your User model fields
                     User user = snapshot.getValue(User.class);
                     userLiveData.postValue(user);
                 } else {
@@ -66,7 +68,6 @@ public class UserRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                System.err.println("Database read failed: " + error.getMessage());
                 userLiveData.postValue(null);
             }
         });
@@ -74,13 +75,14 @@ public class UserRepository {
         return userLiveData;
     }
 
-
-    public void updateUser(String userId, User user, final UserRepositoryCallback<Void> callback) {
-        if (userId == null || userId.isEmpty()) {
+    public void updateUser(String uid, User user, final UserRepositoryCallback<Void> callback) {
+        if (uid == null || uid.isEmpty()) {
             callback.onError(new Exception("Invalid User ID."));
             return;
         }
-        usersRef.child(userId)
+
+        // Updates the entire user object at the specific uid node
+        usersRef.child(uid)
                 .setValue(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess(null))
                 .addOnFailureListener(callback::onError);

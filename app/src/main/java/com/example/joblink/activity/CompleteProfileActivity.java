@@ -28,7 +28,6 @@ import com.example.joblink.R;
 import com.example.joblink.databinding.ActivityCompleteProfileBinding;
 import com.example.joblink.model.User;
 import com.example.joblink.viewmodel.CompleteProfileViewModel;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,8 +38,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
     private ActivityCompleteProfileBinding binding;
     private CompleteProfileViewModel viewModel;
     private Uri imageUri;
-
-    private Long dateOfBirthMillis = 0L;
+    private String selectedDobString = "";
 
     private final ActivityResultLauncher<Intent> galleryLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -102,16 +100,24 @@ public class CompleteProfileActivity extends AppCompatActivity {
         viewModel.getStatus().observe(this, status -> {
             switch (status) {
                 case LOADING:
-                    setLoadingState(true);
+                    setLoadingState(true, null);
                     break;
                 case SUCCESS:
-                    setLoadingState(false);
-                    Toast.makeText(CompleteProfileActivity.this, "Profile completed successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(CompleteProfileActivity.this, HomeActivity.class));
-                    finishAffinity();
+                    Runnable successAction = () -> {
+                        Toast.makeText(CompleteProfileActivity.this, "Profile completed successfully!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CompleteProfileActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    };
+                    setLoadingState(false, successAction);
                     break;
                 case ERROR:
-                    showError(viewModel.getErrorMessage().getValue());
+                    Runnable errorAction = () -> {
+                        String error = viewModel.getErrorMessage().getValue();
+                        showError(error != null ? error : "An unknown error occurred");
+                    };
+                    setLoadingState(false, errorAction);
                     break;
             }
         });
@@ -154,7 +160,6 @@ public class CompleteProfileActivity extends AppCompatActivity {
     private void setupProfessionPicker() {
         binding.editTextProfession.setOnClickListener(v -> showProfessionDialog());
     }
-
 
     private void checkAndRequestPermissions() {
         String imagePermission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -208,9 +213,10 @@ public class CompleteProfileActivity extends AppCompatActivity {
         calendar.add(Calendar.YEAR, -18);
 
         DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
+            selectedDobString = String.format(Locale.US, "%d-%02d-%02d", year, month + 1, dayOfMonth);
+
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(year, month, dayOfMonth);
-            dateOfBirthMillis = selectedDate.getTimeInMillis();
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
             binding.dateOfBirth.setText(sdf.format(selectedDate.getTime()));
         };
@@ -227,6 +233,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
     private void showProfessionDialog() {
         String[] professions = getResources().getStringArray(R.array.professions);
         new AlertDialog.Builder(this)
@@ -263,12 +270,12 @@ public class CompleteProfileActivity extends AppCompatActivity {
         if (!isInputValid()) return;
 
         User user = new User();
-        user.setPhoneNumber(binding.editTextPhoneNumber.getText().toString().trim());
-        user.setGender(binding.radioMale.isChecked() ? "Male" : "Female");
+        user.setPhone(binding.editTextPhoneNumber.getText().toString().trim());
+        user.setGender(binding.radioMale.isChecked() ? "male" : "female");
         user.setLocation(binding.location.getText().toString().trim());
         user.setProfession(binding.editTextProfession.getText().toString().trim());
-        user.setDateOfBirth(dateOfBirthMillis);
-        user.setProfileComplete(true);
+        user.setDob(selectedDobString);
+        user.setSetupComplete(true);
 
         viewModel.saveUserProfile(imageUri, user);
     }
@@ -296,7 +303,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
             return false;
         }
 
-        if (dateOfBirthMillis == 0L) {
+        if (TextUtils.isEmpty(selectedDobString)) {
             showError("Please select your date of birth");
             return false;
         }
@@ -309,15 +316,31 @@ public class CompleteProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    private void setLoadingState(boolean isLoading, Runnable onFinished) {
+        float targetAlpha = isLoading ? 1.0f : 0.0f;
 
-    private void setLoadingState(boolean isLoading) {
-        binding.confirmButton.setEnabled(!isLoading);
-        binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            binding.loadingOverlay.setVisibility(View.VISIBLE);
+            binding.loadingOverlay.setAlpha(0.0f);
+            binding.loadingOverlay.animate()
+                    .alpha(1.0f)
+                    .setDuration(300)
+                    .start();
+        }
+        binding.loadingOverlay.animate()
+                .alpha(targetAlpha)
+                .setDuration(500)
+                .setStartDelay(isLoading ? 0 : 1500)
+                .withEndAction(() -> {
+                    if (!isLoading) {
+                        binding.loadingOverlay.setVisibility(View.GONE);
+                        if (onFinished != null) onFinished.run();
+                    }
+                });
     }
 
     private void showError(String message) {
-        if (isFinishing() || message == null) return;
+        if (isFinishing() || isDestroyed() || message == null) return;
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        setLoadingState(false);
     }
 }

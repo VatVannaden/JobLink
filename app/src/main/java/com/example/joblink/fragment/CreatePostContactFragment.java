@@ -93,7 +93,7 @@ public class CreatePostContactFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        String phone = snapshot.child("phoneNumber").getValue(String.class);
+                        String phone = snapshot.child("phone").getValue(String.class);
                         String email = snapshot.child("email").getValue(String.class);
 
                         phoneNumberText.setText(phone);
@@ -121,11 +121,11 @@ public class CreatePostContactFragment extends Fragment {
     }
 
     private boolean validateInput() {
-        String phoneNumber = phoneNumberText.getText().toString().trim();
+        String phone = phoneNumberText.getText().toString().trim();
         String email = emailText.getText().toString().trim();
         String telegram = telegramLinkText.getText().toString().trim();
 
-        if (phoneNumber.isEmpty() && email.isEmpty() && telegram.isEmpty()) {
+        if (phone.isEmpty() && email.isEmpty() && telegram.isEmpty()) {
             Toast.makeText(getContext(), "Please provide at least one contact method.", Toast.LENGTH_SHORT).show();
             return false;
         }

@@ -1,5 +1,6 @@
 package com.example.joblink.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,7 +22,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
@@ -34,7 +35,6 @@ import com.example.joblink.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,8 +44,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +67,7 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
     private Post currentPost;
     private boolean isBookmarked = false;
     private FirebaseUser currentUser;
+    private User employerUser; // Store employer user data
 
     public PostDetailFragment() {
     }
@@ -82,13 +81,13 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
         return fragment;
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPostDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -112,15 +111,38 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
             if (isAdded()) getParentFragmentManager().popBackStack();
         }
 
-        FragmentManager fm = getChildFragmentManager();
-        SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mapView);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
+        // Initialize Map
+        binding.mapView.onCreate(savedInstanceState);
+        binding.mapView.getMapAsync(this);
+
+        // FIX: Improved touch handling for MapView inside NestedScrollView using an overlay
+        binding.mapOverlay.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(true);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+            // Dispatch the touch event to the actual MapView
+            return binding.mapView.dispatchTouchEvent(event);
+        });
 
         binding.backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
-        binding.bookmarkIcon.setOnClickListener(v -> toggleBookmark());
+        binding.bookmarkButton.setOnClickListener(v -> toggleBookmark());
         binding.shareButton.setOnClickListener(v -> sharePost());
+
+        // Initialize employer info section
+        setupEmployerInfoSection();
+    }
+
+    private void setupEmployerInfoSection() {
+        // Make sure these views exist in your layout
+        // If they don't exist, you need to add them to fragment_post_detail.xml
+        binding.employerInfoSection.setVisibility(View.VISIBLE);
     }
 
     private void setupFirebaseListeners() {
@@ -137,38 +159,33 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("PostDetailFragment", "Failed to read bookmark status.", error.toException());
+                    Log.e("PostDetailFragment", "Bookmark error", error.toException());
                 }
             };
             bookmarksRef.addValueEventListener(bookmarkListener);
         }
     }
 
-
     private void fetchPostDetails() {
-        if (postListener != null) {
-            postsRef.child(postId).removeEventListener(postListener);
-        }
+        if (postListener != null) postsRef.child(postId).removeEventListener(postListener);
         postListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && getContext() != null) {
+                if (snapshot.exists() && isAdded()) {
                     currentPost = snapshot.getValue(Post.class);
                     if (currentPost != null) {
                         currentPost.setPostId(snapshot.getKey());
-                        currentPost.setBookmarked(isBookmarked);
                         updateUI(currentPost);
                         checkPostOwnership(currentPost);
+                        // Fetch employer user data
+                        fetchEmployerInfo(currentPost.getEmployerId());
                     }
-                } else if (getContext() != null) {
-                    Toast.makeText(getContext(), "Post not found or has been deleted.", Toast.LENGTH_SHORT).show();
-                    if (isAdded()) getParentFragmentManager().popBackStack();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("PostDetailFragment", "Failed to read post details.", error.toException());
+                Log.e("PostDetailFragment", "Fetch error", error.toException());
             }
         };
         postsRef.child(postId).addValueEventListener(postListener);
@@ -178,374 +195,356 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
         binding.textJobTitle.setText(post.getTitle());
         binding.postDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(post.getTimestamp())));
         binding.jobCategory.setText(post.getJobCategory());
-        binding.jobType.setText(post.getWorkType());
-        binding.textJobDescription.setText(post.getDescription());
+        binding.jobType.setText(post.getBusinessType());
+        binding.textJobDescription.setText(post.getJobDescription());
         binding.textBusinessName.setText(post.getBusinessName());
-        binding.textLocation.setText(post.getLocation());
-        binding.writeSomethingText.setText(post.getAddressDetails());
-        binding.textWorkType.setText(post.getWorkModel());
+        binding.textLocation.setText(post.getProvince());
+        binding.writeSomethingText.setText(post.getLocationDescription());
+        binding.textWorkType.setText(post.getWorkPlaceType());
         binding.textWorkHours.setText(post.getWorkHours());
-        binding.textWorkDays.setText(post.getWorkDays());
+        binding.textWorkDays.setText(post.getDaysPerWeek());
         binding.textWhyWorkHere.setText(post.getWhyWorkHere());
 
-        if (post.getSalary() != null && !post.getSalary().isEmpty()) {
-            binding.salaryLayout.setVisibility(View.VISIBLE);
+        binding.salaryLayout.setVisibility(!TextUtils.isEmpty(post.getSalary()) ? View.VISIBLE : View.GONE);
+        if (binding.salaryLayout.getVisibility() == View.VISIBLE)
             binding.textSalary.setText(post.getSalary());
-        } else {
-            binding.salaryLayout.setVisibility(View.GONE);
-        }
 
-        if (post.getDayOff() != null && !post.getDayOff().isEmpty() && !post.getDayOff().equalsIgnoreCase("Not specified")) {
-            binding.dayOffContainer.setVisibility(View.VISIBLE);
+        binding.dayOffContainer.setVisibility(post.getDayOff() != null && !post.getDayOff().equalsIgnoreCase("Not specified") ? View.VISIBLE : View.GONE);
+        if (binding.dayOffContainer.getVisibility() == View.VISIBLE)
             binding.textDayOff.setText(post.getDayOff());
+
+        binding.textExperience.setText(String.format("• Experience: %s", post.getExperience()));
+        if (post.getOtherRequirements() != null && !post.getOtherRequirements().isEmpty()) {
+            binding.textRequirements.setText("• " + post.getOtherRequirements().replace("\n", "\n• "));
         } else {
-            binding.dayOffContainer.setVisibility(View.GONE);
+            binding.textRequirements.setText("No specific requirements listed.");
         }
 
-        binding.textExperience.setText(String.format("• Experience: %s", post.getExperienceLevel()));
-        if (post.getRequirements() != null && !post.getRequirements().isEmpty()) {
-            post.getRequirements().removeIf(String::isEmpty);
-            binding.textRequirements.setText("• " + TextUtils.join("\n• ", post.getRequirements()));
-        } else {
-            binding.textRequirements.setText("No requirements specified.");
-        }
+        setupImageSlider(post);
+        populatePerks(binding.benefitsContainer, post.getSelectedBenefits(), true);
+        populatePerks(binding.amenitiesContainer, post.getSelectedAmenities(), false);
 
-        setupImageSlider(post.getImages());
-        populateItems(binding.benefitsContainer, post.getSelectedBenefits(), true);
-        populateItems(binding.amenitiesContainer, post.getSelectedAmenities(), false);
-        fetchEmployerInfo(post.getEmployerId());
+        if (googleMap != null) setupMap(post);
 
-        if (googleMap != null) {
-            setupMap(post);
-        }
-
-        if (post.isAvailable()) {
-            binding.availableSection.setVisibility(View.VISIBLE);
-            binding.notAvailableSection.setVisibility(View.GONE);
-        } else {
-            binding.availableSection.setVisibility(View.GONE);
-            binding.notAvailableSection.setVisibility(View.VISIBLE);
-        }
+        binding.availableSection.setVisibility(post.isAvailable() ? View.VISIBLE : View.GONE);
+        binding.notAvailableSection.setVisibility(post.isAvailable() ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         googleMap = map;
-        if (currentPost != null) {
-            setupMap(currentPost);
-        }
+        googleMap.getUiSettings().setAllGesturesEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        if (currentPost != null) setupMap(currentPost);
     }
 
     private void setupMap(Post post) {
-        LatLng location = getLatLngFromUrl(post.getMapsLink());
-        String title = post.getBusinessName();
-
-        View mapContainerCard = binding.getRoot().findViewById(R.id.mapView).getParent() instanceof View ? (View) binding.getRoot().findViewById(R.id.mapView).getParent() : null;
-
+        LatLng location = getLatLngFromUrl(post.getMapLink());
         if (location == null) {
-            if (mapContainerCard != null) mapContainerCard.setVisibility(View.GONE);
+            binding.mapView.setVisibility(View.GONE);
             return;
         }
-
-        if (mapContainerCard != null) mapContainerCard.setVisibility(View.VISIBLE);
-        if (googleMap == null) return;
-
-        googleMap.clear();
-        googleMap.addMarker(new MarkerOptions().position(location).title(title));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f));
-        googleMap.getUiSettings().setAllGesturesEnabled(true);
+        binding.mapView.setVisibility(View.VISIBLE);
+        if (googleMap != null) {
+            googleMap.clear();
+            googleMap.addMarker(new MarkerOptions().position(location).title(post.getBusinessName()));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f));
+        }
     }
 
     private LatLng getLatLngFromUrl(String url) {
-        if (url == null || url.isEmpty()) return null;
+        if (TextUtils.isEmpty(url)) return null;
         Pattern pattern = Pattern.compile("@(-?[\\d.]+),(-?[\\d.]+)");
         Matcher matcher = pattern.matcher(url);
         if (matcher.find() && matcher.groupCount() >= 2) {
             try {
-                double lat = Double.parseDouble(matcher.group(1));
-                double lng = Double.parseDouble(matcher.group(2));
-                return new LatLng(lat, lng);
-            } catch (NumberFormatException e) {
-                Log.e("getLatLngFromUrl", "Failed to parse coordinates: " + url, e);
+                return new LatLng(Double.parseDouble(matcher.group(1)), Double.parseDouble(matcher.group(2)));
+            } catch (Exception e) {
                 return null;
             }
         }
         return null;
     }
 
-    private void setupImageSlider(List<String> imageUrls) {
-        if (imageUrls != null && !imageUrls.isEmpty()) {ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls, position -> {Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-            intent.putStringArrayListExtra("imageUrls", new ArrayList<>(imageUrls));
-            intent.putExtra("position", position);
-            startActivity(intent);
-        });
-            binding.viewPagerImageSlider.setAdapter(sliderAdapter);
-            setupIndicators(imageUrls.size());
+    private void setupImageSlider(Post post) {
+        List<String> originalUrls = post.getImages();
+        if (originalUrls != null && !originalUrls.isEmpty()) {
+            // Reorder list to put cover image first
+            List<String> reorderedUrls = new ArrayList<>();
+            int coverIndex = post.getCoverImageIndex();
+
+            if (coverIndex >= 0 && coverIndex < originalUrls.size()) {
+                reorderedUrls.add(originalUrls.get(coverIndex));
+            }
+
+            for (int i = 0; i < originalUrls.size(); i++) {
+                if (i != coverIndex) {
+                    reorderedUrls.add(originalUrls.get(i));
+                }
+            }
+
+            binding.viewPagerImageSlider.setAdapter(new ImageSliderAdapter(reorderedUrls, position -> {
+                Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+                intent.putStringArrayListExtra("imageUrls", new ArrayList<>(reorderedUrls));
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }));
+
+            setupIndicators(reorderedUrls.size());
             binding.viewPagerImageSlider.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageSelected(int position) {
-                    super.onPageSelected(position);
                     setCurrentIndicator(position);
                 }
             });
             binding.pagination.setVisibility(View.VISIBLE);
+            binding.viewPagerImageSlider.setVisibility(View.VISIBLE);
         } else {
             binding.viewPagerImageSlider.setVisibility(View.GONE);
             binding.pagination.setVisibility(View.GONE);
         }
     }
 
-    private void populateItems(LinearLayout container, List<String> items, boolean isBenefit) {
+    private void populatePerks(LinearLayout container, List<String> items, boolean isBenefit) {
         container.removeAllViews();
-        if (items.isEmpty() && getContext() != null) {
-            TextView emptyView = new TextView(getContext());
-            emptyView.setText(isBenefit ? "No specific benefits listed." : "No specific amenities listed.");
-            emptyView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_ico));
-            container.addView(emptyView);
+        if (items == null || items.isEmpty()) {
+            TextView tv = new TextView(getContext());
+            tv.setText(isBenefit ? "No benefits listed." : "No amenities listed.");
+            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_ico));
+            container.addView(tv);
         } else {
             for (String item : items) {
-                container.addView(createItemView(item, isBenefit));
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.item_perk, container, false);
+                ((ImageView) view.findViewById(R.id.perkIcon)).setImageResource(isBenefit ? getBenefitIcon(item) : getAmenityIcon(item));
+                ((TextView) view.findViewById(R.id.perkText)).setText(item);
+                container.addView(view);
             }
         }
     }
 
-    private View createItemView(String item, boolean isBenefit) {
-        if (getContext() == null) return null;
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.item_perk, (ViewGroup) getView(), false);
-        ImageView icon = layout.findViewById(R.id.perkIcon);
-        TextView text = layout.findViewById(R.id.perkText);
-        text.setText(item);
-        icon.setImageResource(isBenefit ? getBenefitIcon(item) : getAmenityIcon(item));
-        return layout;
-    }
-
     private void fetchEmployerInfo(String employerId) {
-        if (employerId == null || employerId.isEmpty()) return;
+        if (TextUtils.isEmpty(employerId)) {
+            showDefaultEmployerInfo();
+            return;
+        }
+
         usersRef.child(employerId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && getContext() != null) {
-                    User employer = snapshot.getValue(User.class);
-                    if (employer != null) {
-                        binding.employerUsername.setText(employer.getUsername());
-                        if(isAdded()) {
-                            Glide.with(PostDetailFragment.this)
-                                    .load(employer.getProfileImageUrl())
-                                    .placeholder(R.drawable.img)
-                                    .error(R.drawable.img)
-                                    .into(binding.employerProfileImage);
-                        }
+                if (snapshot.exists() && isAdded()) {
+                    employerUser = snapshot.getValue(User.class);
+                    if (employerUser != null) {
+                        updateEmployerUI(employerUser);
+                    } else {
+                        showDefaultEmployerInfo();
                     }
+                } else {
+                    showDefaultEmployerInfo();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("PostDetailFragment", "Failed to fetch employer info", error.toException());
+                Log.e("PostDetailFragment", "Error fetching employer info", error.toException());
+                showDefaultEmployerInfo();
             }
         });
     }
 
-    private void checkPostOwnership(Post post) {
-        if (currentUser != null && post.getEmployerId() != null && currentUser.getUid().equals(post.getEmployerId())) {
-            setupUIForOwner();
+    private void updateEmployerUI(User employer) {
+        // Set username
+        binding.employerUsername.setText(employer.getUsername() != null ? employer.getUsername() : "Employer");
+
+        // Set email (use post email as fallback)
+        String email = employer.getEmail() != null ? employer.getEmail() :
+                (currentPost != null ? currentPost.getEmail() : "Not provided");
+        binding.employerEmail.setText(email);
+
+        // Set phone (use post phone as fallback)
+        String phone = employer.getPhone() != null ? employer.getPhone() :
+                (currentPost != null ? currentPost.getPhoneNumber() : "Not provided");
+        binding.employerPhone.setText(phone);
+
+        // Set profession
+        String profession = employer.getProfession() != null ? employer.getProfession() :
+                (currentPost != null ? currentPost.getBusinessType() : "Not specified");
+        binding.employerProfession.setText(profession);
+
+        // Set location
+        if (employer.getLocation() != null && !employer.getLocation().isEmpty()) {
+            binding.employerLocation.setText(employer.getLocation());
+            binding.employerLocation.setVisibility(View.VISIBLE);
         } else {
-            setupUIForViewer(post);
+            binding.employerLocation.setVisibility(View.GONE);
+        }
+
+        // Load profile image
+        if (employer.getPhotoURL() != null && !employer.getPhotoURL().isEmpty()) {
+            Glide.with(PostDetailFragment.this)
+                    .load(employer.getPhotoURL())
+                    .placeholder(R.drawable.img)
+                    .error(R.drawable.img)
+                    .into(binding.employerProfileImage);
+        } else {
+            binding.employerProfileImage.setImageResource(R.drawable.img);
+        }
+
+        // Show contact info section
+        binding.employerContactInfo.setVisibility(View.VISIBLE);
+    }
+
+    private void showDefaultEmployerInfo() {
+        // Default employer info using post data
+        String employerName = currentPost != null ? currentPost.getEmployerId() : "Employer";
+        binding.employerUsername.setText(employerName != null ? employerName : "Employer");
+
+        String email = currentPost != null ? currentPost.getEmail() : "Not provided";
+        binding.employerEmail.setText(email);
+
+        String phone = currentPost != null ? currentPost.getPhoneNumber() : "Not provided";
+        binding.employerPhone.setText(phone);
+
+        String profession = currentPost != null ? currentPost.getBusinessType() : "Not specified";
+        binding.employerProfession.setText(profession);
+
+        binding.employerLocation.setVisibility(View.GONE);
+
+        // Fallback profile image (posts don't have author photos, we'll use a placeholder)
+        binding.employerProfileImage.setImageResource(R.drawable.img);
+
+        // Show contact info section
+        binding.employerContactInfo.setVisibility(View.VISIBLE);
+    }
+
+    private void checkPostOwnership(Post post) {
+        boolean isOwner = currentUser != null && TextUtils.equals(currentUser.getUid(), post.getEmployerId());
+        binding.ownerControls.setVisibility(isOwner ? View.VISIBLE : View.GONE);
+        binding.userControls.setVisibility(isOwner ? View.GONE : View.VISIBLE);
+        binding.bottomSection.setVisibility(isOwner ? View.GONE : View.VISIBLE);
+
+        if (isOwner) {
+            binding.availableButton.setOnClickListener(v -> updateAvailability(true));
+            binding.notAvailableButton.setOnClickListener(v -> updateAvailability(false));
+            binding.deleteButton.setOnClickListener(v -> showDeleteDialog());
+        } else {
+            setupViewerActions(post);
         }
     }
 
-    private void setupUIForOwner() {
-        binding.userControls.setVisibility(View.GONE);
-        binding.bottomSection.setVisibility(View.GONE);
-        binding.ownerControls.setVisibility(View.VISIBLE);
-
-        binding.availableButton.setOnClickListener(v -> updatePostAvailability(true));
-        binding.notAvailableButton.setOnClickListener(v -> updatePostAvailability(false));
-        binding.deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
-    }
-
-
-    private void setupUIForViewer(Post post) {
-        binding.ownerControls.setVisibility(View.GONE);
-        binding.userControls.setVisibility(View.VISIBLE);
-        binding.bottomSection.setVisibility(View.VISIBLE);
-
-        boolean isAvailable = post.isAvailable();
-        binding.callToAction.setEnabled(isAvailable);
-        binding.emailToAction.setEnabled(isAvailable);
-        binding.telegramToAction.setEnabled(isAvailable);
-        binding.callToAction.setAlpha(isAvailable ? 1.0f : 0.5f);
-        binding.emailToAction.setAlpha(isAvailable ? 1.0f : 0.5f);
-        binding.telegramToAction.setAlpha(isAvailable ? 1.0f : 0.5f);
+    private void setupViewerActions(Post post) {
+        float alpha = post.isAvailable() ? 1.0f : 0.5f;
+        binding.callToAction.setAlpha(alpha);
+        binding.emailToAction.setAlpha(alpha);
+        binding.telegramToAction.setAlpha(alpha);
 
         binding.callToAction.setOnClickListener(v -> {
-            String phoneNumber = post.getPhoneNumber();
-            if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + phoneNumber.trim()));
-                try {
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(getContext(), "No application can handle this action.", Toast.LENGTH_SHORT).show();
+            if (post.isAvailable()) {
+                // Use employer's phone if available, otherwise use post phone
+                String phoneNumber = employerUser != null && employerUser.getPhone() != null ?
+                        employerUser.getPhone() : post.getPhoneNumber();
+                if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
+                } else {
+                    Toast.makeText(getContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(getContext(), "Phone number not provided.", Toast.LENGTH_SHORT).show();
             }
         });
 
         binding.emailToAction.setOnClickListener(v -> {
-            String email = post.getEmail();
-            if (email != null && !email.trim().isEmpty()) {
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse("mailto:"));
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email.trim()});
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry about your post: " + post.getTitle());
-                try {
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(getContext(), "No email client installed.", Toast.LENGTH_SHORT).show();
+            if (post.isAvailable()) {
+                // Use employer's email if available, otherwise use post email
+                String email = employerUser != null && employerUser.getEmail() != null ?
+                        employerUser.getEmail() : post.getEmail();
+                if (email != null && !email.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry about your job post: " + post.getTitle());
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                } else {
+                    Toast.makeText(getContext(), "Email not available", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(getContext(), "Email not provided.", Toast.LENGTH_SHORT).show();
             }
         });
 
         binding.telegramToAction.setOnClickListener(v -> {
-            String telegramLink = post.getTelegramLink();
-            if (telegramLink != null && !telegramLink.trim().isEmpty()) {
-                String fullUri;
-                if (telegramLink.startsWith("t.me/")) {
-                    fullUri = "https://" + telegramLink;
-                } else if (!telegramLink.startsWith("http")) {
-                    fullUri = "https://t.me/" + telegramLink.replace("@", "");
-                } else {
-                    fullUri = telegramLink;
-                }
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullUri));
-
-                intent.setPackage("org.telegram.messenger");
-
-                try {
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(getContext(), "Telegram is not installed.", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(getContext(), "Telegram contact not provided.", Toast.LENGTH_SHORT).show();
+            if (post.isAvailable() && post.getTelegramLink() != null) {
+                String link = post.getTelegramLink();
+                if (!link.startsWith("http")) link = "https://" + link.replace("@", "");
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
             }
         });
 
+        // Add click listeners to employer contact info
+        binding.employerEmail.setOnClickListener(v -> {
+            if (post.isAvailable()) {
+                String email = binding.employerEmail.getText().toString();
+                if (!email.equals("Not provided") && !email.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry about your job post: " + post.getTitle());
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                }
+            }
+        });
+
+        binding.employerPhone.setOnClickListener(v -> {
+            if (post.isAvailable()) {
+                String phone = binding.employerPhone.getText().toString();
+                if (!phone.equals("Not provided") && !phone.isEmpty()) {
+                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone)));
+                }
+            }
+        });
+    }
+
+    private void updateAvailability(boolean available) {
+        if (postId != null) postsRef.child(postId).child("available").setValue(available)
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Post status updated", Toast.LENGTH_SHORT).show());
+    }
+
+    private void showDeleteDialog() {
+        new AlertDialog.Builder(requireContext()).setTitle("Delete Post")
+                .setMessage("Delete this post permanently?").setPositiveButton("Delete", (d, w) -> deletePost())
+                .setNegativeButton("Cancel", null).show();
+    }
+
+    private void deletePost() {
+        if (postId != null) postsRef.child(postId).removeValue().addOnSuccessListener(aVoid -> {
+            if (isAdded()) getParentFragmentManager().popBackStack();
+        });
     }
 
     private void toggleBookmark() {
         if (currentUser == null) {
-            Toast.makeText(getContext(), "You must be logged in to bookmark posts.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please login to bookmark", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (currentPost == null || bookmarksRef == null) return;
-
-        boolean newBookmarkState = !isBookmarked;
-        bookmarksRef.setValue(newBookmarkState).addOnCompleteListener(task -> {
-            if (isAdded() && getContext() != null) {
-                if (task.isSuccessful()) {
-                    String message = newBookmarkState ? "Bookmarked" : "Removed bookmark";
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Failed to update bookmark.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        bookmarksRef.setValue(!isBookmarked);
     }
 
     private void sharePost() {
-        if (currentPost == null || getContext() == null) {
-            Toast.makeText(getContext(), "Post details not loaded yet.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String shareText = "Check out this job on JobLink: " + currentPost.getTitle() +
-                " at " + currentPost.getBusinessName() + ".";
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-
-        try {
-            startActivity(Intent.createChooser(shareIntent, "Share post via"));
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getContext(), "No application can handle this action.", Toast.LENGTH_SHORT).show();
-        }
+        if (currentPost == null) return;
+        Intent intent = new Intent(Intent.ACTION_SEND).setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, "Look at this job: " + currentPost.getTitle() +
+                        "\n\nCompany: " + currentPost.getBusinessName() +
+                        "\nLocation: " + currentPost.getProvince() +
+                        "\nSalary: " + currentPost.getSalary());
+        startActivity(Intent.createChooser(intent, "Share via"));
     }
 
     private void updateBookmarkIcon() {
-        if (!isAdded()) return;
-        if (isBookmarked) {
-            binding.bookmarkIcon.setImageResource(R.drawable.ico_bookmarks_added);
-        } else {
-            binding.bookmarkIcon.setImageResource(R.drawable.ico_bookmarks_add);
-        }
-    }
-
-    private void updatePostAvailability(boolean isAvailable) {
-        if (postId == null) return;
-        postsRef.child(postId).child("available").setValue(isAvailable).addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Availability updated.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to update availability.", Toast.LENGTH_SHORT).show());
-    }
-
-    private void showDeleteConfirmationDialog() {
-        if (getContext() == null) return;
-        new AlertDialog.Builder(requireContext()).setTitle("Delete Post").setMessage("Are you sure you want to delete this post? This action cannot be undone.").setPositiveButton("Delete", (dialog, which) -> deletePost()).setNegativeButton("Cancel", null).show();
-    }
-
-    private void deletePost() {
-        if (postId == null) return;
-        postsRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Post post = snapshot.getValue(Post.class);
-                if (post != null && post.getImages() != null) {
-                    for (String imageUrl : post.getImages()) {
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                            photoRef.delete().addOnSuccessListener(aVoid -> Log.d("DeletePost", "Image deleted: " + imageUrl)).addOnFailureListener(e -> Log.e("DeletePost", "Failed to delete image: " + imageUrl, e));
-                        }
-                    }
-                }
-                deletePostFromDatabase();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DeletePost", "Failed to read image URLs for deletion. Deleting database entry anyway.", error.toException());
-                deletePostFromDatabase();
-            }
-        });
-    }
-
-    private void deletePostFromDatabase() {
-        postsRef.child(postId).removeValue().addOnSuccessListener(aVoid -> {
-            if (getContext() != null) {
-                Toast.makeText(getContext(), "Post deleted successfully.", Toast.LENGTH_SHORT).show();
-                FragmentActivity activity = getActivity();
-                if (activity != null) {
-                    activity.getSupportFragmentManager().popBackStack();
-                }
-            }
-        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to delete post.", Toast.LENGTH_SHORT).show());
+        if (isAdded())
+            binding.bookmarkIcon.setImageResource(isBookmarked ? R.drawable.ico_bookmarks_added : R.drawable.ico_bookmarks_add);
     }
 
     private void setupIndicators(int count) {
-        if (getContext() == null) return;
         binding.pagination.removeAllViews();
         indicatorViews.clear();
         for (int i = 0; i < count; i++) {
-            ImageView imageView = new ImageView(getContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(8, 0, 8, 0);
-            imageView.setLayoutParams(params);
-            indicatorViews.add(imageView);
-            binding.pagination.addView(imageView);
+            ImageView iv = new ImageView(getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(8, 0, 8, 0);
+            iv.setLayoutParams(lp);
+            indicatorViews.add(iv);
+            binding.pagination.addView(iv);
         }
         if (count > 0) setCurrentIndicator(0);
     }
@@ -556,9 +555,8 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
-    private int getBenefitIcon(String benefit) {
-        switch (benefit) {
+    private int getBenefitIcon(String p) {
+        switch (p) {
             case "Free meal":
                 return R.drawable.ico_food;
             case "Monthly bonus":
@@ -567,47 +565,27 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
                 return R.drawable.ico_timer;
             case "Uniform provided":
                 return R.drawable.ico_uniform;
-            case "Staff discounts":
-                return R.drawable.ico_discount;
             case "Health insurance":
                 return R.drawable.ico_health;
+            case "Staff discounts":
+                return R.drawable.ico_discount;
             case "Holiday":
                 return R.drawable.ico_holiday;
-            case "End-of-year bonus":
-                return R.drawable.ico_end_year_bonus;
-            case "Equipment provided":
-                return R.drawable.ico_equipment;
-            case "Internet allowance":
-                return R.drawable.ico_internet;
-            case "Hotel provided":
-                return R.drawable.ico_hotel;
-            case "Certificate":
-                return R.drawable.ico_certificate;
-            case "Transport provided":
-                return R.drawable.ico_transport;
             default:
                 return R.drawable.ico_checked;
         }
     }
 
-    private int getAmenityIcon(String amenity) {
-        switch (amenity) {
+    private int getAmenityIcon(String p) {
+        switch (p) {
             case "Free wifi":
                 return R.drawable.ico_wifi;
             case "Rest area":
                 return R.drawable.ico_rest;
-            case "Flexible breaks":
-                return R.drawable.ico_flexible;
-            case "Parking spot":
-                return R.drawable.ico_parking;
-            case "Locker":
-                return R.drawable.ico_locker;
-            case "Employee events":
-                return R.drawable.ico_events;
             case "Air-conditioned":
                 return R.drawable.ico_ac;
-            case "Safety equipment":
-                return R.drawable.ico_safety;
+            case "Parking spot":
+                return R.drawable.ico_parking;
             default:
                 return R.drawable.ico_checked;
         }
@@ -616,30 +594,27 @@ public class PostDetailFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() instanceof HomeActivity) {
+        binding.mapView.onResume();
+        if (getActivity() instanceof HomeActivity)
             ((HomeActivity) getActivity()).showBottomNavigationView(false);
-        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (isAdded() && getActivity() instanceof HomeActivity) {
-            ((HomeActivity) getActivity()).showBottomNavigationView(true);
-        }
+        binding.mapView.onPause();
     }
 
     @Override
     public void onDestroyView() {
+        binding.mapView.onDestroy();
         super.onDestroyView();
-        if (getActivity() instanceof HomeActivity) {
-            ((HomeActivity) getActivity()).showBottomNavigationView(true);
-        }
-        if (postListener != null && postId != null) {
-            postsRef.child(postId).removeEventListener(postListener);
-        }
-        if (bookmarkListener != null && bookmarksRef != null) {
-            bookmarksRef.removeEventListener(bookmarkListener);
-        }
+        if (postListener != null) postsRef.child(postId).removeEventListener(postListener);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        binding.mapView.onLowMemory();
     }
 }

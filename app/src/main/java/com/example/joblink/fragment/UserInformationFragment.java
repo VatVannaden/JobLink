@@ -25,9 +25,8 @@ import java.util.Locale;
 
 public class UserInformationFragment extends Fragment {
 
-    private TextView profileName, profileGender, profileAge, profession, email, phoneNumber, location, birthday;
+    private TextView profileName, profileGender, profileAge, profession, email, phone, location, dob;
     private ImageView profileImage;
-
     private ProfileViewModel viewModel;
 
     public UserInformationFragment() {
@@ -47,7 +46,6 @@ public class UserInformationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initializeViews(view);
         setupButtonClickListeners(view);
         observeViewModel();
@@ -59,9 +57,9 @@ public class UserInformationFragment extends Fragment {
         profileAge = view.findViewById(R.id.profileAge);
         profession = view.findViewById(R.id.profession);
         email = view.findViewById(R.id.email);
-        phoneNumber = view.findViewById(R.id.phoneNumber);
+        phone = view.findViewById(R.id.phoneNumber);
         location = view.findViewById(R.id.location);
-        birthday = view.findViewById(R.id.birthday);
+        dob = view.findViewById(R.id.birthday);
         profileImage = view.findViewById(R.id.profileImage);
     }
 
@@ -89,21 +87,28 @@ public class UserInformationFragment extends Fragment {
 
     private void updateUI(User user) {
         profileName.setText(getDisplayValue(user.getUsername()));
-        profileGender.setText(getDisplayValue(user.getGender()));
+
+        String genderStr = user.getGender();
+        if (genderStr != null && !genderStr.isEmpty()) {
+            genderStr = genderStr.substring(0, 1).toUpperCase() + genderStr.substring(1).toLowerCase();
+        }
+        profileGender.setText(getDisplayValue(genderStr));
+
         profession.setText(getDisplayValue(user.getProfession()));
         email.setText(getDisplayValue(user.getEmail()));
-        phoneNumber.setText(getDisplayValue(user.getPhoneNumber()));
+        phone.setText(getDisplayValue(user.getPhone()));
         location.setText(getDisplayValue(user.getLocation()));
 
-        int age = viewModel.calculateAge(user.getDateOfBirth());
+        int age = viewModel.calculateAge(user.getDob());
         profileAge.setText(String.valueOf(age));
-        birthday.setText(formatBirthday(user.getDateOfBirth()));
+        dob.setText(formatdob(user.getDob()));
 
-        if (getContext() != null && user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+        if (getContext() != null && user.getPhotoURL() != null && !user.getPhotoURL().isEmpty()) {
             Glide.with(getContext())
-                    .load(user.getProfileImageUrl())
+                    .load(user.getPhotoURL())
                     .placeholder(R.drawable.img)
                     .error(R.drawable.img)
+                    .circleCrop()
                     .into(profileImage);
         } else {
             profileImage.setImageResource(R.drawable.img);
@@ -116,23 +121,23 @@ public class UserInformationFragment extends Fragment {
         profileGender.setText("Not specified");
         profileAge.setText("0");
         profession.setText("Not specified");
-        phoneNumber.setText("Not specified");
+        phone.setText("Not specified");
         location.setText("Not specified");
-        birthday.setText("Not specified");
+        dob.setText("Not specified");
         profileImage.setImageResource(R.drawable.img);
     }
 
-    public String formatBirthday(long timestamp) {
-        if (timestamp == 0) {
+    public String formatdob(String dobString) {
+        if (dobString == null || dobString.isEmpty()) {
             return "Not specified";
         }
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-            Date date = new Date(timestamp);
-            return sdf.format(date);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+            Date date = inputFormat.parse(dobString);
+            return (date != null) ? outputFormat.format(date) : "Not specified";
         } catch (Exception e) {
-            System.err.println("Error formatting birthday: " + e.getMessage());
-            return "Not specified";
+            return dobString;
         }
     }
 

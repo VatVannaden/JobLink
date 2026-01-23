@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +29,6 @@ import com.example.joblink.activity.HomeActivity;
 import com.example.joblink.adapter.ImageSliderAdapter;
 import com.example.joblink.viewmodel.CreatePostViewModel;
 import com.example.joblink.model.Post;
-import com.example.joblink.model.User;
 import com.example.joblink.repository.PostRepository;
 import com.example.joblink.repository.UserRepository;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,18 +38,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,7 +66,7 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
     private LatLng postLocation;
     private ArrayList<Uri> imageUris;
 
-    private TextView postDate, jobCategory, jobType, jobTitle, jobDescription, workType, businessName, location, writeSomethingText;
+    private TextView postDate, jobCategory, jobType, jobTitle, jobDescription, businessType, businessName, location, writeSomethingText;
     private TextView workHours, workDays, dayOff, salary, requirements, whyWorkHere, textExperience;
     private TextView employerUsername;
     private ImageView employerProfileImage;
@@ -72,7 +74,6 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
     private ViewPager2 viewPagerImageSlider;
     private MapView mapView;
     private GoogleMap googleMap;
-    private ProgressBar uploadProgressBar;
     private MaterialButton postButton;
 
     private ImageSliderAdapter sliderAdapter;
@@ -117,7 +118,7 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
         jobType = view.findViewById(R.id.jobType);
         jobTitle = view.findViewById(R.id.textJobTitle);
         jobDescription = view.findViewById(R.id.textJobDescription);
-        workType = view.findViewById(R.id.textWorkType);
+        businessType = view.findViewById(R.id.textWorkType);
         businessName = view.findViewById(R.id.textBusinessName);
         location = view.findViewById(R.id.textLocation);
         writeSomethingText = view.findViewById(R.id.writeSomethingText);
@@ -137,8 +138,6 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
         employerUsername = view.findViewById(R.id.employerUsername);
         employerProfileImage = view.findViewById(R.id.employerProfileImage);
         postButton = view.findViewById(R.id.postButton);
-
-        // uploadProgressBar = view.findViewById(R.id.uploadProgressBar);
     }
 
     private void updateUIWithData() {
@@ -147,8 +146,8 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
         postDate.setText(new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault()).format(new Date()));
 
         jobCategory.setText(post.getJobCategory());
-        jobType.setText(post.getWorkType());
-        workType.setText(post.getWorkModel());
+        jobType.setText(post.getBusinessType());
+        businessType.setText(post.getWorkPlaceType());
 
         jobTitle.setText(post.getTitle());
         jobDescription.setText(post.getDescription());
@@ -195,13 +194,13 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
             if (user != null && isAdded()) {
                 employerUsername.setText(user.getUsername());
                 Glide.with(this)
-                        .load(user.getProfileImageUrl())
+                        .load(user.getPhotoURL())
                         .placeholder(R.drawable.img)
                         .error(R.drawable.img)
                         .into(employerProfileImage);
 
                 if (post != null) {
-                    post.setEmployerId(user.getUserId());
+                    post.setEmployerId(user.getUid());
                 }
             } else if (isAdded()) {
                 employerUsername.setText("Unknown User");
@@ -342,167 +341,185 @@ public class CreatePostReviewFragment extends Fragment implements OnMapReadyCall
         }
     }
 
+    private void setupIndicators(int count) {
+        indicatorViews.clear();
+        paginationLayout.removeAllViews();
+        for (int i = 0; i < count; i++) {
+            ImageView indicator = new ImageView(getContext());
+            indicator.setImageResource(R.drawable.pagination_tab_short);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            paginationLayout.addView(indicator, params);
+            indicatorViews.add(indicator);
+        }
+        if (count > 0) setCurrentIndicator(0);
+    }
+
+    private void setCurrentIndicator(int position) {
+        for (int i = 0; i < indicatorViews.size(); i++) {
+            indicatorViews.get(i).setImageResource(
+                    i == position ? R.drawable.pagination_tab_long : R.drawable.pagination_tab_short
+            );
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+        if (postLocation != null) {
+            googleMap.addMarker(new MarkerOptions().position(postLocation).title(post.getBusinessName()));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(postLocation, 15f));
+        }
+    }
+
+    private LatLng getLatLngFromUrl(String url) {
+        if (url == null || url.isEmpty()) return null;
+        try {
+            Pattern pattern = Pattern.compile("@(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)");
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.find()) {
+                double lat = Double.parseDouble(matcher.group(1));
+                double lng = Double.parseDouble(matcher.group(2));
+                return new LatLng(lat, lng);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void uploadImagesToFirebase() {
         if (imageUris == null || imageUris.isEmpty()) {
-            Toast.makeText(getContext(), "No images to upload.", Toast.LENGTH_SHORT).show();
+            savePostToDatabase(new ArrayList<>());
             return;
         }
 
         postButton.setEnabled(false);
-        TextView postButtonText = postButton.findViewById(R.id.textView5);
-        if (postButtonText != null) {
-            postButtonText.setText("Uploading...");
+        postButton.setText("Uploading images...");
+
+        final int totalImages = imageUris.size();
+        final String[] imageUrlsArray = new String[totalImages];
+        final AtomicInteger uploadedCount = new AtomicInteger(0);
+        final AtomicBoolean hasFailed = new AtomicBoolean(false);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) {
+            Toast.makeText(getContext(), "User not authenticated.", Toast.LENGTH_SHORT).show();
+            postButton.setEnabled(true);
+            postButton.setText("Post");
+            return;
         }
 
-        if (uploadProgressBar != null) {
-            uploadProgressBar.setVisibility(View.VISIBLE);
-        }
+        String userId = firebaseUser.getUid();
 
-        int coverIndex = createPostViewModel.getCoverImageIndex();
-        ArrayList<Uri> sortedUris = new ArrayList<>();
-        sortedUris.add(imageUris.get(coverIndex));
-        for (int i = 0; i < imageUris.size(); i++) {
-            if (i != coverIndex) {
-                sortedUris.add(imageUris.get(i));
-            }
-        }
-
-        ArrayList<String> downloadedUrls = new ArrayList<>(Collections.nCopies(sortedUris.size(), null));
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("post_images");
-        final int[] uploadCount = {0};
-
-        for (int i = 0; i < sortedUris.size(); i++) {
+        for (int i = 0; i < totalImages; i++) {
             final int index = i;
-            Uri uri = sortedUris.get(i);
-            StorageReference imageRef = storageRef.child(UUID.randomUUID().toString());
+            Uri uri = imageUris.get(i);
+            String fileName = UUID.randomUUID().toString();
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference()
+                    .child("posts")
+                    .child(userId)
+                    .child(fileName);
 
-            imageRef.putFile(uri)
-                    .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl()
-                            .addOnSuccessListener(downloadUri -> {
-                                downloadedUrls.set(index, downloadUri.toString());
-                                uploadCount[0]++;
+            Log.d("CreatePostReview", "Starting upload for: " + uri.toString());
 
-                                if (uploadCount[0] == sortedUris.size()) {
-                                    post.setImages(downloadedUrls);
-                                    savePostToFirestore();
-                                }
-                            }))
-                    .addOnFailureListener(e -> {
-                        if (isAdded()) {
-                            Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            postButton.setEnabled(true);
-                            if (postButtonText != null) {
-                                postButtonText.setText("Post");
-                            }
-                            if (uploadProgressBar != null) {
-                                uploadProgressBar.setVisibility(View.GONE);
-                            }
-                        }
-                    });
+            storageRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+                if (hasFailed.get()) return;
+
+                storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    if (hasFailed.get()) return;
+
+                    imageUrlsArray[index] = downloadUri.toString();
+                    int count = uploadedCount.incrementAndGet();
+                    Log.d("CreatePostReview", "Uploaded: " + count + "/" + totalImages);
+
+                    if (count == totalImages) {
+                        savePostToDatabase(Arrays.asList(imageUrlsArray));
+                    }
+                }).addOnSuccessListener(uri1 -> {
+                    // redundant success listener removed if it was here by mistake in my thought but I'll stick to one.
+                }).addOnFailureListener(e -> {
+                    if (hasFailed.compareAndSet(false, true)) {
+                        Log.e("CreatePostReview", "getDownloadUrl failed", e);
+                        handleUploadFailure(e);
+                    }
+                });
+            }).addOnFailureListener(e -> {
+                if (hasFailed.compareAndSet(false, true)) {
+                    Log.e("CreatePostReview", "putFile failed", e);
+                    handleUploadFailure(e);
+                }
+            });
         }
     }
 
-    private void savePostToFirestore() {
+    private void handleUploadFailure(Exception e) {
+        if (isAdded()) {
+            Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            postButton.setEnabled(true);
+            postButton.setText("Post");
+        }
+    }
+
+    private void savePostToDatabase(List<String> imageUrls) {
+        if (isAdded()) {
+            postButton.setText("Publishing post...");
+            Log.d("CreatePostReview", "Saving post to database...");
+        }
+
+        post.setImages(imageUrls);
+        post.setCoverImageIndex(createPostViewModel.getCoverImageIndex());
+        post.setTimestamp(System.currentTimeMillis());
+
         postRepository.createPost(post, new PostRepository.PostCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 if (isAdded()) {
+                    Log.d("CreatePostReview", "Post saved successfully");
                     Toast.makeText(getContext(), "Post created successfully!", Toast.LENGTH_SHORT).show();
-                    createPostViewModel.clear();
-                    navigateToHome();
+                    Intent intent = new Intent(getActivity(), HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Error creating post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("CreatePostReview", "Database save failed", e);
+                    Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     postButton.setEnabled(true);
-                    TextView postButtonText = postButton.findViewById(R.id.textView5);
-                    if (postButtonText != null) {
-                        postButtonText.setText("Post");
-                    }
-                    if (uploadProgressBar != null) {
-                        uploadProgressBar.setVisibility(View.GONE);
-                    }
+                    postButton.setText("Post");
                 }
             }
         });
     }
 
-    private void navigateToHome() {
-        if (getActivity() != null) {
-            Intent intent = new Intent(getActivity(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            getActivity().finish();
-        }
-    }
-
-    private void setupIndicators(int count) {
-        paginationLayout.removeAllViews();
-        indicatorViews.clear();
-        for (int i = 0; i < count; i++) {
-            ImageView imageView = new ImageView(getContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(8, 0, 8, 0);
-            imageView.setLayoutParams(params);
-            indicatorViews.add(imageView);
-            paginationLayout.addView(imageView);
-        }
-        if (count > 0) setCurrentIndicator(0);
-    }
-
-    private void setCurrentIndicator(int index) {
-        for (int i = 0; i < indicatorViews.size(); i++) {
-            indicatorViews.get(i).setImageResource(
-                    i == index ? R.drawable.pagination_tab_long : R.drawable.pagination_tab_short
-            );
-        }
-    }
-
-    @Override
-    public void onMapReady(@NonNull GoogleMap map) {
-        googleMap = map;
-        googleMap.getUiSettings().setAllGesturesEnabled(true);
-        if (postLocation != null) {
-            googleMap.addMarker(new MarkerOptions().position(postLocation).title(post.getBusinessName()));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(postLocation, 15));
-        }
-    }
-
-    private LatLng getLatLngFromUrl(String url) {
-        if (url == null || url.isEmpty()) return null;
-        Pattern pattern = Pattern.compile("@(-?[\\d.]+),(-?[\\d.]+)");
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.find() && matcher.groupCount() >= 2) {
-            try {
-                double lat = Double.parseDouble(matcher.group(1));
-                double lng = Double.parseDouble(matcher.group(2));
-                return new LatLng(lat, lng);
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
-        return null;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        if (mapView != null) mapView.onResume();
-
-        imageUris = createPostViewModel.getImageUris();
-        setupImageSlider();
+        mapView.onResume();
     }
 
     @Override
-    public void onPause() { super.onPause(); if (mapView != null) mapView.onPause(); }
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
     @Override
-    public void onDestroy() { super.onDestroy(); if (mapView != null) mapView.onDestroy(); }
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
     @Override
-    public void onLowMemory() { super.onLowMemory(); if (mapView != null) mapView.onLowMemory(); }
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
 }

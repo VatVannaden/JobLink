@@ -107,8 +107,8 @@ public class CreatePostAboutFragment extends Fragment {
             titleText.setText(post.getTitle());
             descriptionText.setText(post.getDescription());
             businessNameText.setText(post.getBusinessName());
-            if (!TextUtils.isEmpty(post.getWorkType())) {
-                jobCategory = post.getWorkType();
+            if (!TextUtils.isEmpty(post.getBusinessType())) {
+                jobCategory = post.getBusinessType();
             }
         }
     }
@@ -231,7 +231,7 @@ public class CreatePostAboutFragment extends Fragment {
 
         Post post = createPostViewModel.getPost();
         post.setJobCategory(jobType);
-        post.setWorkType(jobCategory);
+        post.setBusinessType(jobCategory);
         post.setTitle(titleText.getText().toString().trim());
         post.setDescription(descriptionText.getText().toString().trim());
         post.setBusinessName(businessNameText.getText().toString().trim());
@@ -283,15 +283,14 @@ public class CreatePostAboutFragment extends Fragment {
             post.setLocation(null);
             post.setMapsLink(null);
             post.setAddressDetails(null);
-            post.setWorkModel(null);
+            post.setWorkPlaceType(null);
             post.setWorkHours(null);
             post.setWorkDays(null);
             post.setDayOff(null);
             post.setSalary(null);
             post.setWhyWorkHere(null);
             post.setJobCategory(null);
-            post.setWorkType(null);
-            post.setIndustry(null);
+            post.setBusinessType(null);
             post.setExperienceLevel(null);
 
             post.setImages(null);

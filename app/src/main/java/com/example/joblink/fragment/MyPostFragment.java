@@ -43,6 +43,9 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
 
+    private boolean isDataReady = false;
+    private boolean isAnimationFinished = false;
+
     public MyPostFragment() {
     }
 
@@ -55,11 +58,20 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        onLoadingAnimationFinished();
+
+        if (currentUser != null) {
+            fetchUserPosts();
+        }
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference("posts");
 
         noPostLayout = view.findViewById(R.id.noPost);
         myPostRecyclerView = view.findViewById(R.id.myPostRecyclerView);
+
+        myPostRecyclerView.setVisibility(View.GONE);
+        noPostLayout.setVisibility(View.GONE);
 
         myPostRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         postList = new ArrayList<>();
@@ -71,8 +83,8 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
         if (currentUser != null) {
             fetchUserPosts();
         } else {
-            Log.e("MyPostFragment", "Current user is null.");
-            updateUI(false);
+            isDataReady = true;
+            tryShowContent();
         }
     }
 
@@ -84,9 +96,8 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 postList.clear();
-                boolean hasPosts = dataSnapshot.exists();
 
-                if (hasPosts) {
+                if (dataSnapshot.exists()) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         Post post = postSnapshot.getValue(Post.class);
                         if (post != null) {
@@ -98,24 +109,41 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
 
                 Collections.reverse(postList);
                 postAdapter.notifyDataSetChanged();
-                updateUI(hasPosts);
+
+                isDataReady = true;
+                tryShowContent();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("MyPostFragment", "Failed to read user posts.", databaseError.toException());
-                updateUI(false);
+                isDataReady = true;
+                tryShowContent();
             }
         });
+    }
+
+    public void onLoadingAnimationFinished() {
+        isAnimationFinished = true;
+        tryShowContent();
+    }
+
+    private void tryShowContent() {
+        if (isDataReady && isAnimationFinished) {
+            updateUI(!postList.isEmpty());
+        }
     }
 
     private void updateUI(boolean hasPosts) {
         if (hasPosts) {
             myPostRecyclerView.setVisibility(View.VISIBLE);
             noPostLayout.setVisibility(View.GONE);
+            myPostRecyclerView.setAlpha(0f);
+            myPostRecyclerView.animate().alpha(1f).setDuration(300).start();
         } else {
             myPostRecyclerView.setVisibility(View.GONE);
             noPostLayout.setVisibility(View.VISIBLE);
+            noPostLayout.setAlpha(0f);
+            noPostLayout.animate().alpha(1f).setDuration(300).start();
         }
     }
 
@@ -152,22 +180,18 @@ public class MyPostFragment extends Fragment implements PostAdapter.OnItemClickL
     public void onItemClick(Post post) {
         if (post != null && post.getPostId() != null && isAdded()) {
             Fragment detailFragment = new PostDetailFragment();
-
             Bundle args = new Bundle();
             args.putString("postId", post.getPostId());
             detailFragment.setArguments(args);
 
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainFragment, detailFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        } else {
-            Toast.makeText(getContext(), "Error: Could not open post.", Toast.LENGTH_SHORT).show();
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.mainFragment, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
         }
     }
 
     @Override
     public void onBookmarkClick(Post post, ImageButton bookmarkButton) {
-        Toast.makeText(getContext(), "Bookmark clicked for: " + post.getTitle(), Toast.LENGTH_SHORT).show();
     }
 }

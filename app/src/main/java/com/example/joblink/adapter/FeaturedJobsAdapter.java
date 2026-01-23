@@ -57,15 +57,18 @@ public class FeaturedJobsAdapter extends RecyclerView.Adapter<FeaturedJobsAdapte
 
         holder.postTitle.setText(post.getTitle());
         holder.salary.setText(post.getSalary());
-        holder.location.setText(post.getLocation());
-        String timeAgo = getTimeAgo(post.getTimestamp());
-        holder.postTime.setText(timeAgo);
-
+        holder.location.setText(post.getProvince()); // Changed from getLocation()
+        holder.postTime.setText(getTimeAgo((Long) post.getTimestamp()));
         holder.bookmarkButton.setSelected(post.isBookmarked());
 
         if (post.getImages() != null && !post.getImages().isEmpty()) {
+            int coverIndex = post.getCoverImageIndex();
+            if (coverIndex < 0 || coverIndex >= post.getImages().size()) {
+                coverIndex = 0;
+            }
+
             Glide.with(context)
-                    .load(post.getImages().get(0))
+                    .load(post.getImages().get(coverIndex))
                     .placeholder(R.drawable.img)
                     .error(R.drawable.img)
                     .into(holder.postImage);
@@ -80,15 +83,16 @@ public class FeaturedJobsAdapter extends RecyclerView.Adapter<FeaturedJobsAdapte
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
                         String username = snapshot.child("username").getValue(String.class);
-                        String profileImageUrl = snapshot.child("profileImageUrl").getValue(String.class);
+                        String photoURL = snapshot.child("photoURL").getValue(String.class);
 
-                        holder.username.setText(username);
+                        holder.username.setText(username != null ? username : "Unknown User");
 
-                        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                        if (photoURL != null && !photoURL.isEmpty()) {
                             Glide.with(context)
-                                    .load(profileImageUrl)
+                                    .load(photoURL)
                                     .placeholder(R.drawable.img)
                                     .error(R.drawable.img)
+                                    .circleCrop()
                                     .into(holder.profileImage);
                         } else {
                             holder.profileImage.setImageResource(R.drawable.img);
@@ -108,46 +112,35 @@ public class FeaturedJobsAdapter extends RecyclerView.Adapter<FeaturedJobsAdapte
         }
 
         if (holder.jobDetailsLayout.getChildCount() >= 5) {
-            TextView workTypeText = (TextView) holder.jobDetailsLayout.getChildAt(0);
-            TextView workLocationText = (TextView) holder.jobDetailsLayout.getChildAt(2);
+            TextView businessTypeText = (TextView) holder.jobDetailsLayout.getChildAt(0);
+            TextView workplaceTypeText = (TextView) holder.jobDetailsLayout.getChildAt(2);
             TextView experienceText = (TextView) holder.jobDetailsLayout.getChildAt(4);
 
-            workTypeText.setText(post.getWorkType() != null ? post.getWorkType() : "N/A");
-            workLocationText.setText(post.getWorkModel() != null ? post.getWorkModel() : "N/A");
-            experienceText.setText(post.getExperienceLevel() != null ? post.getExperienceLevel() : "N/A");
+            businessTypeText.setText(post.getBusinessType() != null ? post.getBusinessType() : "N/A");
+            workplaceTypeText.setText(post.getWorkPlaceType() != null ? post.getWorkPlaceType() : "N/A");
+            experienceText.setText(post.getExperience() != null ? post.getExperience() : "N/A");
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(post);
-            }
+            if (itemClickListener != null) itemClickListener.onItemClick(post);
         });
 
         holder.bookmarkButton.setOnClickListener(v -> {
-            if (bookmarkClickListener != null) {
-                bookmarkClickListener.onBookmarkClick(post, holder.bookmarkButton);
-            }
+            if (bookmarkClickListener != null) bookmarkClickListener.onBookmarkClick(post, holder.bookmarkButton);
         });
     }
 
     private String getTimeAgo(long timestamp) {
-        long now = System.currentTimeMillis();
-        long diff = now - timestamp;
-
+        long diff = System.currentTimeMillis() - timestamp;
         long seconds = diff / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
         long days = hours / 24;
 
-        if (days > 0) {
-            return days + " " + (days > 1 ? "days" : "day") + " ago";
-        } else if (hours > 0) {
-            return hours + " " + (hours > 1 ? "hours" : "hour") + " ago";
-        } else if (minutes > 0) {
-            return minutes + " " + (minutes > 1 ? "minutes" : "minute") + " ago";
-        } else {
-            return "Just now";
-        }
+        if (days > 0) return days + (days > 1 ? " days" : " day") + " ago";
+        if (hours > 0) return hours + (hours > 1 ? " hours" : " hour") + " ago";
+        if (minutes > 0) return minutes + (minutes > 1 ? " minutes" : " minute") + " ago";
+        return "Just now";
     }
 
     @Override
