@@ -8,8 +8,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class CreateAccountViewModel extends ViewModel {
 
@@ -83,12 +88,17 @@ public class CreateAccountViewModel extends ViewModel {
     }
 
     private void createUserEntry(FirebaseUser firebaseUser, String username) {
+        // Format ISO timestamp to match Web: "2026-01-19T11:04:23.553Z"
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String timestamp = isoFormat.format(new Date());
+
         Map<String, Object> user = new HashMap<>();
-        user.put("userId", firebaseUser.getUid());
+        user.put("uid", firebaseUser.getUid());
         user.put("username", username);
         user.put("email", firebaseUser.getEmail());
-        user.put("isProfileComplete", false);
-        user.put("createdAt", System.currentTimeMillis());
+        user.put("setupComplete", false);
+        user.put("updatedAt", timestamp);
 
         databaseReference.child(firebaseUser.getUid())
                 .setValue(user)

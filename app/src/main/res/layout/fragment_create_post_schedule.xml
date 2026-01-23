@@ -7,7 +7,6 @@
     android:background="@color/milk"
     tools:context=".fragment.CreatePostScheduleFragment">
 
-    <!-- All other views (TextView, hour/day, salary, etc.) remain the same -->
     <TextView
         android:id="@+id/textView20"
         android:layout_width="wrap_content"
@@ -33,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView20">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/hourPerDay"
+            android:id="@+id/duration"
             android:layout_width="178dp"
             android:layout_height="50dp"
             android:background="@color/white"
@@ -42,20 +41,46 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <EditText
-                android:id="@+id/hourPerDayText"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:ellipsize="end"
-                android:fontFamily="@font/open_sans"
-                android:hint="Hour per day"
-                android:inputType="numberDecimal"
-                android:maxLines="1"
-                android:paddingHorizontal="20dp"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textSize="12sp" />
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="20dp">
+
+                <TextView
+                    android:id="@+id/startTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:hint="Start Time"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:background="#E0E0E0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/endTimeText"
+                    app:layout_constraintStart_toEndOf="@+id/startTimeText"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/endTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:hint="End Time"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
@@ -171,7 +196,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- RadioGroup has been REMOVED. This allows multiple selections. -->
             <GridLayout
                 android:id="@+id/benefitsGridLayout"
                 android:layout_width="match_parent"
@@ -179,8 +203,6 @@
                 android:alignmentMode="alignBounds"
                 android:columnCount="2">
 
-                <!-- All your LinearLayouts containing MaterialRadioButtons go here... -->
-                <!-- Health insurance -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -198,7 +220,6 @@
                         android:text="Health insurance" />
                 </LinearLayout>
 
-                <!-- Monthly bonus -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -216,8 +237,6 @@
                         android:text="Monthly bonus" />
                 </LinearLayout>
 
-                <!-- ... and so on for all other benefits ... -->
-                <!-- End-of-year bonus -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -235,7 +254,6 @@
                         android:text="End-of-year bonus" />
                 </LinearLayout>
 
-                <!-- Overtime pay -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -253,7 +271,6 @@
                         android:text="Overtime pay" />
                 </LinearLayout>
 
-                <!-- Holiday -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -271,7 +288,6 @@
                         android:text="Holiday" />
                 </LinearLayout>
 
-                <!-- Staff discounts -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -289,7 +305,6 @@
                         android:text="Staff discounts" />
                 </LinearLayout>
 
-                <!-- Free meal -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -307,7 +322,6 @@
                         android:text="Free meal" />
                 </LinearLayout>
 
-                <!-- Equipment provided -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -325,7 +339,6 @@
                         android:text="Equipment provided" />
                 </LinearLayout>
 
-                <!-- Internet allowance -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -343,7 +356,6 @@
                         android:text="Internet allowance" />
                 </LinearLayout>
 
-                <!-- Accommodation -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -361,7 +373,6 @@
                         android:text="Accommodation" />
                 </LinearLayout>
 
-                <!-- Hotel provided -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -379,7 +390,6 @@
                         android:text="Hotel provided" />
                 </LinearLayout>
 
-                <!-- Certificate -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -397,7 +407,6 @@
                         android:text="Certificate" />
                 </LinearLayout>
 
-                <!-- Uniform provided -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -414,7 +423,6 @@
                         android:text="Uniform provided" />
                 </LinearLayout>
 
-                <!-- Transport provided -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -431,13 +439,11 @@
                         android:text="Transport provided" />
                 </LinearLayout>
 
-
             </GridLayout>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- The rest of your layout (Back/Next buttons) remains the same -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

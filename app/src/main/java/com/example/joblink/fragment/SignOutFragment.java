@@ -84,9 +84,9 @@ public class SignOutFragment extends DialogFragment {
     private void updateUI(User user) {
         usernameTextView.setText(user.getUsername());
 
-        if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+        if (user.getPhotoURL() != null && !user.getPhotoURL().isEmpty()) {
             Glide.with(getContext())
-                    .load(user.getProfileImageUrl())
+                    .load(user.getPhotoURL())
                     .placeholder(R.drawable.img)
                     .error(R.drawable.img)
                     .into(profileImageView);

@@ -63,7 +63,11 @@ public class CompleteProfileViewModel extends ViewModel {
 
     private void uploadImageAndSaveProfile(FirebaseUser firebaseUser, Uri imageUri, User userUpdates) {
         String userId = firebaseUser.getUid();
-        StorageReference imageRef = storage.getReference().child("profile_images").child(userId + ".jpg");
+
+        StorageReference imageRef = storage.getReference()
+                .child("profiles")
+                .child(userId)
+                .child("profile.jpg");
 
         imageRef.putFile(imageUri).continueWithTask(task -> {
             if (!task.isSuccessful()) {
@@ -93,24 +97,24 @@ public class CompleteProfileViewModel extends ViewModel {
                     existingUser = snapshot.getValue(User.class);
                     if (existingUser == null) {
                         existingUser = new User();
-                        existingUser.setUserId(userId);
+                        existingUser.setUid(userId);
                         existingUser.setEmail(firebaseUser.getEmail());
                         existingUser.setUsername("User");
                     }
                 } else {
                     existingUser = new User();
-                    existingUser.setUserId(userId);
+                    existingUser.setUid(userId);
                     existingUser.setEmail(firebaseUser.getEmail());
                     existingUser.setUsername("User");
                 }
 
-                existingUser.setProfileImageUrl(profileImageUrl);
-                existingUser.setPhoneNumber(userUpdates.getPhoneNumber());
+                existingUser.setPhotoURL(profileImageUrl);
+                existingUser.setPhone(userUpdates.getPhone());
                 existingUser.setGender(userUpdates.getGender());
                 existingUser.setLocation(userUpdates.getLocation());
                 existingUser.setProfession(userUpdates.getProfession());
-                existingUser.setDateOfBirth(userUpdates.getDateOfBirth());
-                existingUser.setProfileComplete(true);
+                existingUser.setDob(userUpdates.getDob());
+                existingUser.setSetupComplete(true);
 
                 userRepository.updateUser(userId, existingUser, new UserRepository.UserRepositoryCallback<Void>() {
                     @Override

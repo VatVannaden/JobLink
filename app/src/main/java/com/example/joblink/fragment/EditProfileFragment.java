@@ -41,8 +41,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class EditProfileFragment extends Fragment {
@@ -57,7 +59,7 @@ public class EditProfileFragment extends Fragment {
 
     private FirebaseAuth auth;
     private UserRepository userRepository;
-    private StorageReference storageProfileImagesRef;
+    private FirebaseStorage storage;
 
     private User currentUserData;
     private Uri newImageUri;
@@ -92,16 +94,20 @@ public class EditProfileFragment extends Fragment {
                         break;
                     }
                 }
-
-                if (allGranted) {
-                    showImagePickerDialog();
-                } else {
-                    if (isAdded()) {
-                        Toast.makeText(getContext(), "Permissions are required to select an image.", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                if (allGranted) showImagePickerDialog();
+                else if (isAdded()) Toast.makeText(getContext(), "Permissions required.", Toast.LENGTH_SHORT).show();
             });
 
+    private void showImagePickerDialog() {
+        String[] options = {"Camera", "Gallery"};
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Select Image From")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) openCamera();
+                    else openGallery();
+                })
+                .show();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,10 +117,9 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         auth = FirebaseAuth.getInstance();
         userRepository = new UserRepository();
-        storageProfileImagesRef = FirebaseStorage.getInstance().getReference("profile_images");
+        storage = FirebaseStorage.getInstance();
 
         initializeViews(view);
         setupListeners();
@@ -152,30 +157,16 @@ public class EditProfileFragment extends Fragment {
         editLocation.setOnClickListener(v -> showLocationDialog());
         editBirthday.setOnClickListener(v -> showDatePickerDialog());
         editProfession.setOnClickListener(v -> showProfessionDialog());
-
         btnUpdateUsername.setOnClickListener(v -> updateUsername());
         btnUpdatePhone.setOnClickListener(v -> updatePhoneNumber());
         btnChangePassword.setOnClickListener(v -> changePassword());
 
         radioGroupGender.setOnCheckedChangeListener((group, checkedId) -> {
             if (currentUserData != null) {
-                String newGender = (checkedId == R.id.radioMale) ? "Male" : "Female";
+                String newGender = (checkedId == R.id.radioMale) ? "male" : "female";
                 if (!newGender.equals(currentUserData.getGender())) {
                     currentUserData.setGender(newGender);
-                    userRepository.updateUser(currentUserData.getUserId(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                        @Override
-                        public void onSuccess(Void result) {
-                            if (isAdded()) {
-                                Toast.makeText(getContext(), "Gender updated", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        @Override
-                        public void onError(Exception e) {
-                            if (isAdded()) {
-                                Toast.makeText(getContext(), "Failed to update gender", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    updateUserInDatabase("Gender updated");
                 }
             }
         });
@@ -187,10 +178,6 @@ public class EditProfileFragment extends Fragment {
                 if (user != null) {
                     currentUserData = user;
                     populateUI();
-                } else {
-                    if (isAdded()) {
-                        Toast.makeText(getContext(), "Could not load user profile.", Toast.LENGTH_SHORT).show();
-                    }
                 }
             });
         }
@@ -201,102 +188,44 @@ public class EditProfileFragment extends Fragment {
 
         profileName.setText(currentUserData.getUsername());
         newUsername.setText(currentUserData.getUsername());
-        newPhone.setText(currentUserData.getPhoneNumber());
+        newPhone.setText(currentUserData.getPhone());
         editLocation.setText(currentUserData.getLocation());
         editProfession.setText(currentUserData.getProfession());
 
-        if ("Male".equals(currentUserData.getGender())) {
+        if ("male".equalsIgnoreCase(currentUserData.getGender())) {
             radioMale.setChecked(true);
             profileGender.setText("Male");
-        } else if ("Female".equals(currentUserData.getGender())) {
+        } else if ("female".equalsIgnoreCase(currentUserData.getGender())) {
             radioFemale.setChecked(true);
             profileGender.setText("Female");
         }
 
-        if (currentUserData.getDateOfBirth() > 0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
-            editBirthday.setText(sdf.format(new java.util.Date(currentUserData.getDateOfBirth())));
-            profileAge.setText(String.valueOf(calculateAge(currentUserData.getDateOfBirth())));
-        }
-
-        if (currentUserData.getProfileImageUrl() != null && !currentUserData.getProfileImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(currentUserData.getProfileImageUrl())
-                    .placeholder(R.drawable.img)
-                    .error(R.drawable.img)
-                    .into(profileImage);
-        } else {
-            profileImage.setImageResource(R.drawable.img);
-        }
-    }
-
-    private void checkAndRequestPermissions() {
-        String imagePermission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                ? Manifest.permission.READ_MEDIA_IMAGES
-                : Manifest.permission.READ_EXTERNAL_STORAGE;
-        String[] permissionsToRequest = {Manifest.permission.CAMERA, imagePermission};
-
-        boolean allGranted = true;
-        for (String permission : permissionsToRequest) {
-            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-                allGranted = false;
-                break;
+        if (!TextUtils.isEmpty(currentUserData.getDob())) {
+            try {
+                SimpleDateFormat webFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                Date date = webFormat.parse(currentUserData.getDob());
+                SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
+                editBirthday.setText(displayFormat.format(date));
+                profileAge.setText(String.valueOf(calculateAge(date)));
+            } catch (ParseException e) {
+                editBirthday.setText(currentUserData.getDob());
             }
         }
-        if (allGranted) showImagePickerDialog();
-        else requestPermissionsLauncher.launch(permissionsToRequest);
-    }
 
-    private void showImagePickerDialog() {
-        String[] options = {"Camera", "Gallery"};
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Select Image From")
-                .setItems(options, (dialog, which) -> {
-                    if (which == 0) openCamera();
-                    else openGallery();
-                })
-                .show();
-    }
-
-    private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Profile Picture");
-        newImageUri = requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, newImageUri);
-        cameraLauncher.launch(cameraIntent);
-    }
-
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryLauncher.launch(intent);
+        Glide.with(this)
+                .load(currentUserData.getPhotoURL())
+                .placeholder(R.drawable.img)
+                .error(R.drawable.img)
+                .into(profileImage);
     }
 
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
-        if (currentUserData != null && currentUserData.getDateOfBirth() > 0) {
-            calendar.setTimeInMillis(currentUserData.getDateOfBirth());
-        }
-
         new DatePickerDialog(requireContext(), (view, year, month, day) -> {
-            calendar.set(year, month, day);
-            long newDateOfBirth = calendar.getTimeInMillis();
-            if (currentUserData != null && currentUserData.getDateOfBirth() != newDateOfBirth) {
-                currentUserData.setDateOfBirth(newDateOfBirth);
-                userRepository.updateUser(currentUserData.getUserId(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        if(isAdded()) {
-                            Toast.makeText(getContext(), "Birthday updated", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    @Override
-                    public void onError(Exception e) {
-                        if(isAdded()) {
-                            Toast.makeText(getContext(), "Failed to update birthday", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+            String newDob = String.format(Locale.US, "%d-%02d-%02d", year, month + 1, day);
+            if (currentUserData != null && !newDob.equals(currentUserData.getDob())) {
+                currentUserData.setDob(newDob);
+                updateUserInDatabase("Birthday updated");
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
@@ -306,249 +235,140 @@ public class EditProfileFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Select Province")
                 .setItems(locations, (dialog, which) -> {
-                    String selectedLocation = locations[which];
-                    if (currentUserData != null && !selectedLocation.equals(currentUserData.getLocation())) {
-                        currentUserData.setLocation(selectedLocation);
-                        userRepository.updateUser(currentUserData.getUserId(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void result) {
-                                if (isAdded()) {
-                                    Toast.makeText(getContext(), "Location updated", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            @Override
-                            public void onError(Exception e) {
-                                if (isAdded()) {
-                                    Toast.makeText(getContext(), "Failed to update location", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                    String selected = locations[which];
+                    if (currentUserData != null && !selected.equals(currentUserData.getLocation())) {
+                        currentUserData.setLocation(selected);
+                        updateUserInDatabase("Location updated");
                     }
-                })
-                .show();
+                }).show();
     }
 
     private void showProfessionDialog() {
         final EditText input = new EditText(requireContext());
-        input.setHint("e.g., Software Developer");
+        input.setHint("e.g., Developer");
         if (currentUserData != null) input.setText(currentUserData.getProfession());
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Enter Your Profession")
+                .setTitle("Enter Profession")
                 .setView(input)
                 .setPositiveButton("Save", (dialog, which) -> {
-                    String profession = input.getText().toString().trim();
-                    if (!TextUtils.isEmpty(profession) && currentUserData != null && !profession.equals(currentUserData.getProfession())) {
-                        currentUserData.setProfession(profession);
-                        userRepository.updateUser(currentUserData.getUserId(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void result) {
-                                if (isAdded()) {
-                                    Toast.makeText(getContext(), "Profession updated", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            @Override
-                            public void onError(Exception e) {
-                                if(isAdded()) {
-                                    Toast.makeText(getContext(), "Failed to update profession", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                    String prof = input.getText().toString().trim();
+                    if (!TextUtils.isEmpty(prof) && currentUserData != null) {
+                        currentUserData.setProfession(prof);
+                        updateUserInDatabase("Profession updated");
                     }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }).setNegativeButton("Cancel", null).show();
     }
 
     private void updateUsername() {
-        String newUsernameText = newUsername.getText().toString().trim();
-        String password = passwordUsername.getText().toString().trim();
+        String name = newUsername.getText().toString().trim();
+        String pass = passwordUsername.getText().toString().trim();
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(pass)) return;
 
-        if (TextUtils.isEmpty(newUsernameText)) {
-            newUsername.setError("Username cannot be empty");
-            return;
-        }
-        if (TextUtils.isEmpty(password)) {
-            passwordUsername.setError("Password is required");
-            return;
-        }
-
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null || user.getEmail() == null) return;
-
-        reauthenticateAndRun(password, () -> {
-            currentUserData.setUsername(newUsernameText);
-            userRepository.updateUser(user.getUid(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    if(isAdded()) {
-                        Toast.makeText(getContext(), "Username updated successfully", Toast.LENGTH_SHORT).show();
-                        passwordUsername.setText("");
-                    }
-                }
-                @Override
-                public void onError(Exception e) {
-                    if(isAdded()) {
-                        Toast.makeText(getContext(), "Failed to update username", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        reauthenticateAndRun(pass, () -> {
+            currentUserData.setUsername(name);
+            updateUserInDatabase("Username updated");
+            passwordUsername.setText("");
         });
     }
 
     private void updatePhoneNumber() {
-        String newPhoneText = newPhone.getText().toString().trim();
-        String password = passwordPhone.getText().toString().trim();
-        if (TextUtils.isEmpty(newPhoneText)) {
-            newPhone.setError("Phone number cannot be empty");
-            return;
-        }
-        if (TextUtils.isEmpty(password)) {
-            passwordPhone.setError("Password is required");
-            return;
-        }
+        String phone = newPhone.getText().toString().trim();
+        String pass = passwordPhone.getText().toString().trim();
+        if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(pass)) return;
 
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null || user.getEmail() == null) return;
-
-        reauthenticateAndRun(password, () -> {
-            currentUserData.setPhoneNumber(newPhoneText);
-            userRepository.updateUser(user.getUid(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    if(isAdded()) {
-                        Toast.makeText(getContext(), "Phone number updated successfully", Toast.LENGTH_SHORT).show();
-                        passwordPhone.setText("");
-                    }
-                }
-                @Override
-                public void onError(Exception e) {
-                    if(isAdded()) {
-                        Toast.makeText(getContext(), "Failed to update phone number", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        reauthenticateAndRun(pass, () -> {
+            currentUserData.setPhone(phone);
+            updateUserInDatabase("Phone updated");
+            passwordPhone.setText("");
         });
     }
 
-    private void changePassword() {
-        String oldPass = oldPassword.getText().toString().trim();
-        String newPass = newPassword.getText().toString().trim();
-        String confirmPass = confirmPassword.getText().toString().trim();
+    private void uploadProfileImage() {
+        if (newImageUri == null || auth.getCurrentUser() == null) return;
+        String uid = auth.getCurrentUser().getUid();
 
-        if (TextUtils.isEmpty(oldPass) || TextUtils.isEmpty(newPass) || TextUtils.isEmpty(confirmPass)) {
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (newPass.length() < 8) {
-            newPassword.setError("Password must be at least 8 characters");
-            return;
-        }
-        if (!newPass.equals(confirmPass)) {
-            confirmPassword.setError("New passwords do not match");
-            return;
-        }
+        // Match Website Storage Path: profiles/{uid}/profile.jpg
+        StorageReference fileRef = storage.getReference().child("profiles").child(uid).child("profile.jpg");
 
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) return;
-
-        reauthenticateAndRun(oldPass, () -> user.updatePassword(newPass).addOnCompleteListener(task -> {
-            if (isAdded()) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
-                    oldPassword.setText("");
-                    newPassword.setText("");
-                    confirmPassword.setText("");
-                } else {
-                    Toast.makeText(getContext(), "Failed to update password: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }));
+        fileRef.putFile(newImageUri).continueWithTask(task -> {
+            if (!task.isSuccessful()) throw task.getException();
+            return fileRef.getDownloadUrl();
+        }).addOnSuccessListener(uri -> {
+            currentUserData.setPhotoURL(uri.toString());
+            updateUserInDatabase("Profile image updated");
+        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_SHORT).show());
     }
 
-    private void uploadProfileImage() {
-        if (newImageUri == null) return;
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) return;
-
-        if(isAdded()) {
-            Toast.makeText(getContext(), "Uploading new image...", Toast.LENGTH_SHORT).show();
-        }
-        StorageReference fileRef = storageProfileImagesRef.child(user.getUid() + ".jpg");
-
-        fileRef.putFile(newImageUri)
-                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            currentUserData.setProfileImageUrl(uri.toString());
-                            userRepository.updateUser(user.getUid(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
-                                @Override
-                                public void onSuccess(Void result) {
-                                    if(isAdded()) {
-                                        Toast.makeText(getContext(), "Profile image updated", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                @Override
-                                public void onError(Exception e) {
-                                    if(isAdded()) {
-                                        Toast.makeText(getContext(), "Failed to save new image URL", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }))
-                .addOnFailureListener(e -> {
-                    if (isAdded()) {
-                        Toast.makeText(getContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void updateUserInDatabase(String successMsg) {
+        userRepository.updateUser(currentUserData.getUid(), currentUserData, new UserRepository.UserRepositoryCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                if (isAdded()) Toast.makeText(getContext(), successMsg, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onError(Exception e) {
+                if (isAdded()) Toast.makeText(getContext(), "Update failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void reauthenticateAndRun(String password, Runnable action) {
         FirebaseUser user = auth.getCurrentUser();
-        if (user == null || user.getEmail() == null) {
-            if(isAdded()) {
-                Toast.makeText(getContext(), "User not found or email is missing.", Toast.LENGTH_SHORT).show();
-            }
-            return;
-        }
-
+        if (user == null || user.getEmail() == null) return;
         AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
-        user.reauthenticate(credential)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        action.run();
-                    } else {
-                        if(isAdded()) {
-                            Toast.makeText(getContext(), "Authentication failed. Please check your password.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        user.reauthenticate(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) action.run();
+            else if (isAdded()) Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
+        });
     }
 
-    private int calculateAge(long dateOfBirthMillis) {
-        if (dateOfBirthMillis == 0) return 0;
+    private void changePassword() {
+        String oldP = oldPassword.getText().toString().trim();
+        String newP = newPassword.getText().toString().trim();
+        if (newP.length() < 8 || !newP.equals(confirmPassword.getText().toString().trim())) return;
+
+        reauthenticateAndRun(oldP, () -> auth.getCurrentUser().updatePassword(newP).addOnCompleteListener(task -> {
+            if (isAdded() && task.isSuccessful()) {
+                Toast.makeText(getContext(), "Password changed", Toast.LENGTH_SHORT).show();
+                oldPassword.setText(""); newPassword.setText(""); confirmPassword.setText("");
+            }
+        }));
+    }
+
+    private int calculateAge(Date birthDate) {
         Calendar dob = Calendar.getInstance();
-        dob.setTimeInMillis(dateOfBirthMillis);
+        dob.setTime(birthDate);
         Calendar today = Calendar.getInstance();
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) age--;
         return age;
+    }
+
+    private void checkAndRequestPermissions() {
+        String imagePerm = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ? Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+        requestPermissionsLauncher.launch(new String[]{Manifest.permission.CAMERA, imagePerm});
+    }
+
+    private void openCamera() {
+        ContentValues v = new ContentValues(); v.put(MediaStore.Images.Media.TITLE, "Profile");
+        newImageUri = requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
+        cameraLauncher.launch(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, newImageUri));
+    }
+
+    private void openGallery() {
+        galleryLauncher.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() instanceof HomeActivity) {
-            ((HomeActivity) getActivity()).showBottomNavigationView(false);
-        }
+        if (getActivity() instanceof HomeActivity) ((HomeActivity) getActivity()).showBottomNavigationView(false);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (getActivity() instanceof HomeActivity) {
-            ((HomeActivity) getActivity()).showBottomNavigationView(true);
-        }
+        if (getActivity() instanceof HomeActivity) ((HomeActivity) getActivity()).showBottomNavigationView(true);
     }
 }

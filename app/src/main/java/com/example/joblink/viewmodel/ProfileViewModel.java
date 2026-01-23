@@ -7,11 +7,9 @@ import com.example.joblink.model.User;
 import com.example.joblink.repository.PostRepository;
 import com.example.joblink.repository.UserRepository;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 
 public class ProfileViewModel extends ViewModel {
@@ -43,29 +41,18 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public int calculateAge(String dateOfBirthString) {
-        if (dateOfBirthString == null || dateOfBirthString.isEmpty()) {
+        if (dateOfBirthString == null || dateOfBirthString.isEmpty() || dateOfBirthString.equals("Not specified")) {
             return 0;
         }
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.US);
             LocalDate birthDate = LocalDate.parse(dateOfBirthString, formatter);
             LocalDate currentDate = LocalDate.now();
             return Period.between(birthDate, currentDate).getYears();
         } catch (Exception e) {
-            System.err.println("Error parsing date of birth: " + e.getMessage());
+            e.printStackTrace();
             return 0;
         }
-    }
-
-    public int calculateAge(long timestamp) {
-        if (timestamp == 0) {
-            return 0;
-        }
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String dateOfBirthString = sdf.format(date);
-
-        return calculateAge(dateOfBirthString);
     }
 
     public void signOut() {

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,14 +15,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.joblink.R;
+import com.example.joblink.activity.HomeActivity;
 import com.example.joblink.activity.LoginActivity;
 import com.example.joblink.model.User;
 import com.example.joblink.viewmodel.ProfileViewModel;
 import com.google.android.material.card.MaterialCardView;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
 
@@ -95,16 +91,21 @@ public class ProfileFragment extends Fragment {
         if (!isAdded()) return;
 
         profileName.setText(user.getUsername());
-        profileGender.setText(user.getGender());
 
-        String dobString = convertTimestampToString(user.getDateOfBirth());
-        int age = viewModel.calculateAge(dobString);
+        // Capitalize gender for display if stored as "male/female"
+        String genderText = user.getGender();
+        if (genderText != null && !genderText.isEmpty()) {
+            genderText = genderText.substring(0, 1).toUpperCase() + genderText.substring(1);
+        }
+        profileGender.setText(genderText);
 
+        // dob is already a String, just pass it directly
+        int age = viewModel.calculateAge(user.getDob());
         profileAge.setText(String.valueOf(age));
 
-        if (getContext() != null && user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+        if (getContext() != null && user.getPhotoURL() != null && !user.getPhotoURL().isEmpty()) {
             Glide.with(this)
-                    .load(user.getProfileImageUrl())
+                    .load(user.getPhotoURL())
                     .placeholder(R.drawable.img)
                     .error(R.drawable.img)
                     .into(profileImage);
@@ -113,19 +114,15 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private String convertTimestampToString(long timestamp) {
-        if (timestamp == 0) {
-            return null;
-        }
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        return sdf.format(date);
-    }
-
     private void setupClickListeners() {
         profileCard.setOnClickListener(v -> navigateTo(new UserInformationFragment(), "user_info"));
         historyCard.setOnClickListener(v -> navigateTo(new HistoryFragment(), "history"));
-        myPostCard.setOnClickListener(v -> navigateTo(new MyPostFragment(), "my_post"));
+
+        // Updated My Post listener to show loading
+        myPostCard.setOnClickListener(v -> {
+            handleMyPostNavigation();
+        });
+
         editAccount.setOnClickListener(v -> navigateTo(new EditProfileFragment(), "edit_profile"));
 
         signOut.setOnClickListener(v -> {
@@ -133,6 +130,24 @@ public class ProfileFragment extends Fragment {
                 new SignOutFragment().show(getActivity().getSupportFragmentManager(), "sign_out_dialog");
             }
         });
+    }
+
+    private void handleMyPostNavigation() {
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity homeActivity = (HomeActivity) getActivity();
+
+            // 1. Show the loading overlay
+            homeActivity.setLoadingState(true, null);
+
+            // 2. Perform the navigation immediately (it happens in background)
+            navigateTo(new MyPostFragment(), "my_post");
+
+            // 3. Hide loading (the 1.5s delay you set in HomeActivity will create the illusion)
+            homeActivity.setLoadingState(false, null);
+        } else {
+            // Fallback if not inside HomeActivity
+            navigateTo(new MyPostFragment(), "my_post");
+        }
     }
 
     private void navigateTo(Fragment fragment, String backStackName) {

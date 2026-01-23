@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 
@@ -17,6 +18,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private boolean hasNavigated = false;
+    private boolean isAnimationFinished = false;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +28,22 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // Initialize the AuthStateListener
+        authStateListener = firebaseAuth -> {
+            // Only trigger navigation if the animation has also finished
+            if (isAnimationFinished) {
+                checkAndNavigate();
+            }
+        };
+
         binding.main.addTransitionListener(new MotionLayout.TransitionListener() {
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
-                navigateOnceWithDelay();
+                isAnimationFinished = true;
+                // Transition finished, now check if we can navigate
+                checkAndNavigate();
             }
 
             @Override
@@ -40,15 +56,35 @@ public class MainActivity extends AppCompatActivity {
             public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {}
         });
 
+        // Start splash animation after 1 second
         new Handler(Looper.getMainLooper()).postDelayed(() -> binding.main.transitionToState(R.id.enlarged), 1000);
     }
 
-    private void navigateOnceWithDelay() {
-        if (hasNavigated) return;
-        hasNavigated = true;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Start listening for Auth changes
+        mAuth.addAuthStateListener(authStateListener);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Clean up listener
+        if (authStateListener != null) {
+            mAuth.removeAuthStateListener(authStateListener);
+        }
+    }
+
+    private void checkAndNavigate() {
+        if (hasNavigated || !isAnimationFinished) return;
+        
+        // Wait a tiny bit (500ms) to ensure Firebase has fully initialized its local token
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (hasNavigated) return;
+            hasNavigated = true;
+
+            FirebaseUser currentUser = mAuth.getCurrentUser();
             Intent intent;
             if (currentUser != null) {
                 intent = new Intent(MainActivity.this, HomeActivity.class);
@@ -57,6 +93,6 @@ public class MainActivity extends AppCompatActivity {
             }
             startActivity(intent);
             finish();
-        }, 1500);
+        }, 500);
     }
 }

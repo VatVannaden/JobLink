@@ -32,20 +32,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20">
 
-        <EditText
+        <TextView
             android:id="@+id/locationText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:gravity="center|left"
+            android:background="@drawable/label"
+            android:drawableEnd="@drawable/ico_arrow1"
+            android:focusable="false"
+            android:hint="Province"
+            android:paddingHorizontal="20dp"
             android:fontFamily="@font/open_sans"
-            android:hint="Province/ City"
-            android:padding="20dp"
-            android:textSize="12sp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:scrollHorizontally="true"
-            android:ellipsize="end"
-            android:inputType="text" />
+            android:textSize="12sp" />
     </com.google.android.material.card.MaterialCardView>
 
 

@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
 import com.example.joblink.R;
+import com.example.joblink.activity.HomeActivity;
 import com.example.joblink.adapter.FeaturedJobsAdapter;
 import com.example.joblink.adapter.PostAdapter;
 import com.example.joblink.databinding.FragmentHomeBinding;
@@ -62,6 +63,8 @@ public class HomeFragment extends Fragment {
     private final List<Post> recentPosts = new ArrayList<>();
     private final List<Post> allRecentPostsMaster = new ArrayList<>();
     private final Set<String> bookmarkedPostIds = new HashSet<>();
+
+    HomeActivity homeActivity;
     private ValueAnimator animator;
 
     @Override
@@ -448,4 +451,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        if (homeActivity == null) homeActivity = (HomeActivity) getActivity();
+        if (homeActivity != null) {
+            homeActivity.showBottomNavigationView(true);
+        }
+        super.onResume();
+    }
 }
+

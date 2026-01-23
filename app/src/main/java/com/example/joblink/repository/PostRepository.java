@@ -1,5 +1,6 @@
 package com.example.joblink.repository;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,6 +23,7 @@ public class PostRepository {
 
     private final DatabaseReference postsRef;
     private final FirebaseAuth mAuth;
+    private static final String TAG = "PostRepository";
 
     public interface PostCallback<T> {
         void onSuccess(T result);
@@ -40,6 +42,9 @@ public class PostRepository {
             return;
         }
 
+        // Force the app to wake up the network connection
+        FirebaseDatabase.getInstance().goOnline();
+
         String postId = postsRef.push().getKey();
         if (postId == null) {
             callback.onError(new Exception("Could not generate post ID."));
@@ -50,10 +55,17 @@ public class PostRepository {
         post.setEmployerId(currentUser.getUid());
         post.setTimestamp(System.currentTimeMillis());
 
-        postsRef.child(postId)
-                .setValue(post)
-                .addOnSuccessListener(aVoid -> callback.onSuccess(null))
-                .addOnFailureListener(callback::onError);
+        // IMPORTANT: Using DatabaseReference.CompletionListener
+        // This ignores the local cache and waits for the server to say "I got it!"
+        postsRef.child(postId).setValue(post, (error, ref) -> {
+            if (error != null) {
+                Log.e(TAG, "Post failed to sync to server: " + error.getMessage());
+                callback.onError(error.toException());
+            } else {
+                Log.d(TAG, "Post successfully synced to server!");
+                callback.onSuccess(null);
+            }
+        });
     }
 
     public LiveData<List<Post>> getAllPosts() {
@@ -79,7 +91,7 @@ public class PostRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                System.err.println("Database read failed: " + error.getMessage());
+                Log.e(TAG, "Database read failed: " + error.getMessage());
                 postsLiveData.postValue(null);
             }
         });
@@ -112,7 +124,7 @@ public class PostRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                System.err.println("Post count listen failed: " + error.getMessage());
+                Log.e(TAG, "Post count listen failed: " + error.getMessage());
                 postCountLiveData.postValue(0L);
             }
         });

@@ -121,8 +121,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             salary.setText(post.getSalary());
 
             if (post.getImages() != null && !post.getImages().isEmpty()) {
+                int coverIndex = post.getCoverImageIndex();
+                // Ensure index is within bounds
+                if (coverIndex < 0 || coverIndex >= post.getImages().size()) {
+                    coverIndex = 0;
+                }
+                
                 Glide.with(context)
-                        .load(post.getImages().get(0))
+                        .load(post.getImages().get(coverIndex))
                         .placeholder(R.drawable.img)
                         .error(R.drawable.img)
                         .into(postImage);
