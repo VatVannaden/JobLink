@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/milk"
-    tools:context=".fragment.CreatePostFragment">
+    tools:context=".view.activity.fragment.CreatePostFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
